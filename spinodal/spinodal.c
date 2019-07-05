@@ -8,7 +8,7 @@ double rand_ZeroToOne()
 }
 
 // Generate discrete laplacian
-double laplacian(Nx, Ny, Nz, dx, dy, dz, &grad){
+double laplacian(Nx, Ny, Nz, dx, dy, dz, &conc){
 
   // use standard 5 point stencil
 
@@ -20,7 +20,6 @@ int main() {
   //Declararions
   int j, k, i, istep, N;
   FILE *fp;
-
 
   //System Configuration
   int Nx=100,
@@ -40,15 +39,14 @@ int main() {
   float c0 = 0.40,
   mobility = 1.0,
   grad_coef= 0.5,
-  conc[NxNy]={0.0};
+  conc[Nx][Ny]={0.0};
 
   // generate initial microstructure
   float noise=0.02;
 
   for (i=0, i<Nx; i++)  {
     for (i=0, i<Ny; i++) {
-      ii = i*Nx+j;
-      conc(ii) =c0 + noise*(0.5-rand_ZeroToOne());
+      conc[i][j] =c0 + noise*(0.5-rand_ZeroToOne());
     } // end for Nx
   } // end for Ny
 
