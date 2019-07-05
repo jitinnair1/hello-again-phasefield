@@ -45,7 +45,9 @@ int main() {
       int Nx=N,
           Ny=1,
           Nz=1,
-          num_points=Nx*Ny*Nx;
+          num_points=0;
+
+      num_points=Nx*Ny*Nz;
 
       char filename[30];
       sprintf(filename, "time_%05d.vtk", k);
@@ -55,11 +57,11 @@ int main() {
       fprintf(fp, "# vtk DataFile Version 2.0\n");
       fprintf(fp, "time_10.vtk\n");
       fprintf(fp, "ASCII\n");
-      fprintf(fp, "DATASET STRUCTURED_GRID\n");
 
       // co-ordinates of grid points
+      fprintf(fp, "DATASET STRUCTURED_GRID\n");
       fprintf(fp, "DIMENSIONS %6d %6d %6d\n", Nx, Ny, Nz );
-      fprintf(fp, "POINTS   %6d  float\n", num_points );
+      fprintf(fp, "POINTS %6d  float\n", num_points );
       for (l=0; l<N; l++){
         float x,
               y=0.0,
@@ -69,7 +71,7 @@ int main() {
       }
 
       // grid point values
-      fprintf(fp,"POINT_DATA %5d\n", num_points);
+      fprintf(fp,"POINT_DATA %6d\n", num_points);
       fprintf(fp,"SCALARS CONC  float  1\n");
       fprintf(fp,"LOOKUP_TABLE default\n");
       for (l=0; l < N; l++) {
