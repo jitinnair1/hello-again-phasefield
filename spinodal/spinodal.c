@@ -1,20 +1,4 @@
-#include "stdio.h"
-#include "math.h"
-
-// Generate random number between 0 and 1
-double rand_ZeroToOne()
-{
-  return (double)rand() / (double)RAND_MAX ;
-}
-
-// Generate discrete laplacian
-double laplacian(Nx, Ny, Nz, dx, dy, dz, &conc){
-
-  // use standard 5 point stencil
-
-}
-
-// main function
+#include "spinodal.h"
 
 int main() {
   //Declararions
