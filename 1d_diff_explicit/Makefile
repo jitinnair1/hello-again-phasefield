@@ -1,9 +1,10 @@
 CC=gcc
 CFLAGS= -Wall
+TARGET=Diff1DExplicit
 
-Diff1DExplicit: Diff1DExplicit.c write_to_VTK.c
-	$(CC) Diff1DExplicit.c write_to_VTK.c -o Diff1DExplicit.out $(CFLAGS)
+$(TARGET): $(TARGET).c write_to_VTK.c
+	$(CC) $(TARGET).c write_to_VTK.c -o $(TARGET).out $(CFLAGS)
 
 clean:
-	-rm -f Diff1DExplicit.o
-	-rm -f Diff1DExplicit
+	-rm -f $(TARGET).o
+	-rm -f $(TARGET)
