@@ -1,4 +1,4 @@
-#include "Diff1DExplicit.h"
+#include "spinodal.h"
 
 void write_to_VTK( int nx, int ny, int nz, float dx, float dy, float dz, int iprint, float conc[] ) {
 
