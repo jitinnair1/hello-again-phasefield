@@ -1,4 +1,7 @@
-void write_to_VTK(nx, ny, nz, conc){
+#include "Diff1DExplicit.h"
+
+void write_to_VTK( int nx, int ny, int nz, float dx, float dy, float dz, int iprint, float conc[] ) {
+
   // write data for every istep in VTK file format
   int Nx=nx+1,
   Ny=ny+1,
@@ -15,7 +18,7 @@ void write_to_VTK(nx, ny, nz, conc){
 
   FILE *fp;
   char filename[30];
-  sprintf(filename, "./output/time_%05d.vtk", k);
+  sprintf(filename, "./output/time_%05d.vtk", iprint);
   fp = fopen(filename,"w");
 
   // write header of VTK file
