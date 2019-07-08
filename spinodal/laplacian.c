@@ -4,7 +4,7 @@
 void laplacian(
   int nx, int ny, int nz,
   float dx, float dy, float dz,
-  float conc[][], int lap_con[][]){
+  float conc[nx][ny], float lap_con[nx][ny]){
 
     // use standard 5 point stencil
     int jp, jm, ip, im;
@@ -19,28 +19,22 @@ void laplacian(
         im=i-1;
 
         if(im < 0){
-          im=Nx;
+          im=nx;
         }
 
-        if(ip > Nx){
+        if(ip > nx){
           ip=1;
         }
 
         if(jm < 0){
-          jm=Ny;
+          jm=ny;
         }
 
-        if(jp > Ny){
+        if(jp > ny){
           jp=1;
         }
 
-        hne=con[ip][j];
-        hnw=con[im][j];
-        hns=con[i][jm];
-        hnn=con[i][jp];
-        hnc=con[i][j];
-
-        lap_con[i][j] =(hnw + hne + hns + hnn -4.0*hnc)/(dx*dy);
+        lap_con[i][j] =(conc[im][j] + conc[ip][j] + conc[i][jm] + conc[i][jp] -4.0*conc[i][j])/(dx*dy);
       }
     }
   }

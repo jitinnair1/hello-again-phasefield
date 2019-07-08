@@ -1,5 +1,6 @@
 CC=gcc
-CFLAGS= -Wall
+DEBUG=-ggdb
+CFLAGS= -Wall -std=c99
 TARGET=spinodal
 DEPENDENCIES= free_energy.c \
 							laplacian.c \
@@ -11,6 +12,9 @@ DEPENDENCIES= free_energy.c \
 $(TARGET): $(TARGET).c $(DEPENDENCIES)
 	$(CC) $(TARGET).c $(DEPENDENCIES) -o $(TARGET).out $(CFLAGS)
 
+debug: $(TARGET).c $(DEPENDENCIES)
+	$(CC) $(DEBUG) $(TARGET).c $(DEPENDENCIES) -o $(TARGET).out $(CFLAGS)
+
 clean:
-	-rm -f $(TARGET).o
+	-rm -f $(TARGET).out
 	-rm -f $(TARGET)
