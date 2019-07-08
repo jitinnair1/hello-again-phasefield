@@ -16,5 +16,7 @@ debug: $(TARGET).c $(DEPENDENCIES)
 	$(CC) $(DEBUG) $(TARGET).c $(DEPENDENCIES) -o $(TARGET).out $(CFLAGS)
 
 clean:
+	-rm -rf $(TARGET).out.*
 	-rm -f $(TARGET).out
+	-rm -f $(TARGET).o
 	-rm -f $(TARGET)
