@@ -1,6 +1,6 @@
 #include "spinodal.h"
 
-void write_to_VTK( int nx, int ny, int nz, float dx, float dy, float dz, int iprint, float conc[] ) {
+void write_to_VTK( int nx, int ny, int nz, float dx, float dy, float dz, int iprint, float conc[][] ) {
 
   // write data for every istep in VTK file format
   int Nx=nx+1,
@@ -47,8 +47,9 @@ void write_to_VTK( int nx, int ny, int nz, float dx, float dy, float dz, int ipr
   fprintf(fp,"SCALARS CONC  float  1\n");
   fprintf(fp,"LOOKUP_TABLE default\n");
   for (p=0; p < Nx; p++) {
-    fprintf(fp, "%f\n", conc[p]);
+    for (q=0; q < Ny; q++) {
+    fprintf(fp, "%f\n", conc[p][q]);
   }
-
+}
   fclose(fp);
 }
