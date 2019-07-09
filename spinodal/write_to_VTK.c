@@ -32,18 +32,17 @@ void write_to_VTK( int nx, int ny, int nz,
   fprintf(fp, "DATASET STRUCTURED_GRID\n");
   fprintf(fp, "DIMENSIONS %6d %6d %6d\n", Nx, Ny, Nz );
   fprintf(fp, "POINTS %6d  float\n", num_points );
-  int p, q, r;
+  int p, q;
+  float z=0.0;
   for (p=0; p< Nx; p++){
     for (q=0; q< Ny; q++){
-      for (r=0; r< Nz; r++){
-        float x, y, z;
+        float x, y;
         x = p*dx;
         y = q*dy;
-        z = r*dz;
         fprintf(fp, "%f %f %f\n", x, y, z);
       }
     }
-  }
+
   // grid point values
   fprintf(fp,"POINT_DATA %6d\n", num_points);
   fprintf(fp,"SCALARS CONC  float  1\n");

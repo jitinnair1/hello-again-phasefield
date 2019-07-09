@@ -4,6 +4,7 @@ CFLAGS= -Wall -std=c99
 TARGET=spinodal
 DEPENDENCIES= free_energy.c \
 							laplacian.c \
+							prep_microstructure.c \
 							rand_ZeroToOne.c \
 							solve.c \
 							solve2.c \
@@ -20,3 +21,10 @@ clean:
 	-rm -f $(TARGET).out
 	-rm -f $(TARGET).o
 	-rm -f $(TARGET)
+
+purge:
+	-rm -rf $(TARGET).out.*
+	-rm -f $(TARGET).out
+	-rm -f $(TARGET).o
+	-rm -f $(TARGET)
+	-rm -rf output/
