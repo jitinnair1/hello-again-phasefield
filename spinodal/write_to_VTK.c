@@ -12,8 +12,6 @@ void write_to_VTK( int nx, int ny, int nz,
 
   num_points=Nx*Ny*Nz;
 
-  printf("Test: %f\n", conc[36][36] );
-
   // create output directory if not created
   struct stat st = {0};
   if (stat("./output", &st) == -1) {
@@ -50,10 +48,10 @@ void write_to_VTK( int nx, int ny, int nz,
   fprintf(fp,"POINT_DATA %6d\n", num_points);
   fprintf(fp,"SCALARS CONC  float  1\n");
   fprintf(fp,"LOOKUP_TABLE default\n");
-  for (p=0; p < Nx; p++) {
-    for (q=0; q < Ny; q++) {
-    fprintf(fp, "%f\n", conc[p][q]);
+  for (size_t i = 0; i < Nx; i++) {
+    for (size_t j = 0; j < Ny; j++) {
+      fprintf(fp, "%f\n", conc[i][j]);
+    }
   }
-}
   fclose(fp);
 }
