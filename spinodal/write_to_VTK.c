@@ -12,6 +12,8 @@ void write_to_VTK( int nx, int ny, int nz,
 
   num_points=Nx*Ny*Nz;
 
+  printf("Test: %f\n", conc[36][36] );
+
   // create output directory if not created
   struct stat st = {0};
   if (stat("./output", &st) == -1) {
@@ -31,14 +33,15 @@ void write_to_VTK( int nx, int ny, int nz,
   // co-ordinates of grid points
   fprintf(fp, "DATASET STRUCTURED_GRID\n");
   fprintf(fp, "DIMENSIONS %6d %6d %6d\n", Nx, Ny, Nz );
-  fprintf(fp, "POINTS %6d  float\n", num_points );
+  fprintf(fp, "POINTS %7d  float\n", num_points );
   int p, q;
-  float z=0.0;
+  float x, y, z;
+
   for (p=0; p< Nx; p++){
     for (q=0; q< Ny; q++){
-        float x, y;
         x = p*dx;
         y = q*dy;
+        z = 0.0;
         fprintf(fp, "%f %f %f\n", x, y, z);
       }
     }
