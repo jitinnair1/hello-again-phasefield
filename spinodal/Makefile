@@ -6,6 +6,7 @@ DEPENDENCIES= free_energy.c \
 							laplacian.c \
 							prep_microstructure.c \
 							rand_ZeroToOne.c \
+							set_array_zero.c \
 							solve.c \
 							solve2.c \
 							write_to_VTK.c

@@ -25,7 +25,10 @@ int main(){
   grad_coef= 0.5;
 
   float conc[Nx][Ny];
-  memset(conc, 0, sizeof(conc[0][0]) * Nx * Ny);
+  set_array_zero(Nx, Ny, conc);
+
+  /* The problem with using memset for floating values can be seen here:
+  //memset(conc, 0, sizeof(conc[0][0]) *Nx *Ny);
 
   // *** Check why printing values post memset give non-zero values? ***
   for (size_t i = 0; i <= Nx; i++) {
@@ -34,9 +37,12 @@ int main(){
       //conc[i][j]=0.0;
     }
   }
+  */
+
   //get array of random numbers between 0 and 1 for setting initial microstructure
   float random_ZeroToOne_array[Nx][Ny];
-  memset(random_ZeroToOne_array, 0, sizeof(random_ZeroToOne_array[0][0]) * Nx * Ny);
+  set_array_zero(Nx, Ny, random_ZeroToOne_array);
+  //memset(random_ZeroToOne_array, 0, sizeof(random_ZeroToOne_array[0][0]) * Nx * Ny);
   rand_ZeroToOne(Nx, Ny, random_ZeroToOne_array);
 
   //generate initial microstructure

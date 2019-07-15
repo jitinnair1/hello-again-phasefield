@@ -21,6 +21,8 @@ void prep_microstructure(int nx, int ny, float conc[nx][ny], float c0,
 
 void rand_ZeroToOne(int nx, int ny, float random_ZeroToOne_array[nx][ny]);
 
+void set_array_zero(int nx, int ny, float input_array[nx][ny]);
+
 void solve(int nx, int ny, float grad_coef,
   float dfdcon[nx][ny], float lap_con[nx][ny], float lap2_con[nx][ny]);
 
