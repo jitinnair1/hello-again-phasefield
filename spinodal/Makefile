@@ -2,7 +2,8 @@ CC=gcc
 DEBUG=-ggdb
 CFLAGS= -Wall -std=c99
 TARGET=spinodal
-DEPENDENCIES= free_energy.c \
+DEPENDENCIES= array_deallocate.c \
+							free_energy.c \
 							laplacian.c \
 							prep_microstructure.c \
 							rand_ZeroToOne.c \

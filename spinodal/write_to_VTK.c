@@ -2,7 +2,7 @@
 
 void write_to_VTK( int nx, int ny, int nz,
   float dx, float dy, float dz,
-  int iprint, float conc[nx][ny] ) {
+  int iprint, float **conc ) {
 
   // write data for every istep in VTK file format
   int Nx=nx+1,
@@ -11,6 +11,7 @@ void write_to_VTK( int nx, int ny, int nz,
   num_points=0;
 
   num_points=Nx*Ny*Nz;
+
 
   // create output directory if not created
   struct stat st = {0};
@@ -35,7 +36,7 @@ void write_to_VTK( int nx, int ny, int nz,
   int p, q;
   float x, y, z;
 
-  for (p=0; p< Nx; p++){
+  for (p=0; p<Nx; p++){
     for (q=0; q< Ny; q++){
         x = p*dx;
         y = q*dy;
@@ -44,13 +45,15 @@ void write_to_VTK( int nx, int ny, int nz,
       }
     }
 
+
   // grid point values
   fprintf(fp,"POINT_DATA %6d\n", num_points);
   fprintf(fp,"SCALARS CONC  float  1\n");
   fprintf(fp,"LOOKUP_TABLE default\n");
-  for (size_t i = 0; i < Nx; i++) {
-    for (size_t j = 0; j < Ny; j++) {
-      fprintf(fp, "%f\n", conc[i][j]);
+  int i, j;
+  for (i = 0; i < Nx; i++) {
+    for (j = 0; j < Ny; j++) {
+      fprintf(fp, "%f\n", conc[i][j] );
     }
   }
   fclose(fp);
