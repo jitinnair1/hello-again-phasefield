@@ -9,30 +9,30 @@
 
 // Funcion Declaration
 
-//float* array_allocate(int nx, int ny, float **array);
+float** array_allocate(int nx, int ny, float **array);
 
 void array_deallocate(int ny, float **array);
 
-void free_energy(int nx, int ny,
-  float **conc, float dfdcon[nx][ny]);
+float** free_energy(int nx, int ny,
+  float **conc, float **dfdcon);
 
-void laplacian(
+float** laplacian(
   int nx, int ny, int nz,
   float dx, float dy, float dz,
-  float **conc, float lap_con[nx][ny]);
+  float **conc, float **lap_con);
 
-void prep_microstructure(int nx, int ny, float **conc, float c0,
+float** prep_microstructure(int nx, int ny, float **conc, float c0,
   float noise, float **random_ZeroToOne_array );
 
-void rand_ZeroToOne(int nx, int ny, float **random_ZeroToOne_array);
+float** rand_ZeroToOne(int nx, int ny, float **random_ZeroToOne_array);
 
-void set_array_zero(int nx, int ny, float input_array[nx][ny]);
+//void set_array_zero(int nx, int ny, float input_array[nx][ny]);
 
-void solve(int nx, int ny, float grad_coef,
-  float dfdcon[nx][ny], float lap_con[nx][ny], float **lap_dummy);
+float** solve(int nx, int ny, float grad_coef,
+  float **dfdcon, float **lap_con, float **lap_dummy);
 
-void solve2(int nx, int ny, float dt,
-  float mobility, float lap2_con[nx][ny], float **conc);
+float** solve2(int nx, int ny, float dt,
+  float mobility, float **lap2_con, float **conc);
 
 void write_to_VTK( int nx, int ny, int nz,
   float dx, float dy, float dz,

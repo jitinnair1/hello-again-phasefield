@@ -2,7 +2,8 @@ CC=gcc
 DEBUG=-ggdb
 CFLAGS= -Wall -std=c99
 TARGET=spinodal
-DEPENDENCIES= array_deallocate.c \
+DEPENDENCIES= array_allocate.c \
+							array_deallocate.c \
 							free_energy.c \
 							laplacian.c \
 							prep_microstructure.c \

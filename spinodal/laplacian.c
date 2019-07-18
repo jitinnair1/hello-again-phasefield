@@ -1,10 +1,10 @@
 #include "spinodal.h"
 
 // Generate discrete laplacian
-void laplacian(
+float** laplacian(
   int nx, int ny, int nz,
   float dx, float dy, float dz,
-  float **conc, float lap_con[nx][ny]){
+  float **conc, float **lap_con){
 
     // use standard 5 point stencil
     int jp, jm, ip, im;
@@ -37,4 +37,5 @@ void laplacian(
         lap_con[i][j] =(conc[im][j] + conc[ip][j] + conc[i][jm] + conc[i][jp] -4.0*conc[i][j])/(dx*dy);
       }
     }
+    return lap_con;
   }

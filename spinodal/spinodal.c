@@ -19,53 +19,26 @@ int main(){
   float dt=0.001;
 
   //material Specific Parameters
-  float c0 = 0.40,
-  noise=0.8,
+  float c0 = 0.50,
+  noise=1.0,
   mobility = 1.0,
   grad_coef= 0.5;
 
-  // float **conc;
-  // conc=array_allocate(Nx, Ny, conc);
-  //
-  // float **random_ZeroToOne_array;
-  // random_ZeroToOne_array=array_allocate(Nx, Ny, random_ZeroToOne_array);
 
-  int m=Nx+2;
-  float **conc = calloc(m, sizeof(float *));
-  int r;
-  for (r = 0; r <= Ny; r++)
-  conc[r] = calloc(Ny, sizeof(float));
+  //memory allocation
+  float **conc=0,
+  **random_ZeroToOne_array=0,
+  **lap_con=0,
+  **dfdcon=0,
+  **lap2_con=0,
+  **lap_dummy=0;
 
-  float **random_ZeroToOne_array = calloc(m, sizeof(float *));
-  for (r = 0; r <= Ny; r++)
-  random_ZeroToOne_array[r] = calloc(Ny, sizeof(float));
-
-  float **lap_dummy = calloc(m, sizeof(float *));
-  for (r = 0; r <= Ny; r++)
-  lap_dummy[r] = calloc(Ny, sizeof(float));
-
-  float lap_con[Nx][Ny];
-  for (size_t i = 0; i < Nx; i++) {
-    for (size_t j = 0; j < Ny; j++) {
-      lap_con[i][j]=0.0;
-    }
-  }
-
-  float dfdcon[Nx][Ny];
-    for (size_t i = 0; i < Nx; i++) {
-      for (size_t j = 0; j < Ny; j++) {
-        dfdcon[i][j]=0.0;
-      }
-    }
-
-    float lap2_con[Nx][Ny];
-    for (size_t i = 0; i < Nx; i++) {
-      for (size_t j = 0; j < Ny; j++) {
-        lap2_con[i][j]=0.0;
-      }
-    }
-
-
+  conc=array_allocate(Nx, Ny, conc);
+  random_ZeroToOne_array=array_allocate(Nx, Ny, random_ZeroToOne_array);
+  lap_dummy=array_allocate(Nx, Ny, lap_dummy);
+  lap_con=array_allocate(Nx, Ny, lap_con);
+  dfdcon=array_allocate(Nx, Ny, dfdcon);
+  lap2_con=array_allocate(Nx, Ny, lap2_con);
 
   //get array of random numbers between 0 and 1 for setting initial microstructure
   rand_ZeroToOne(Nx, Ny, random_ZeroToOne_array);
@@ -76,12 +49,10 @@ int main(){
   //write initial microstructure
   write_to_VTK(Nx, Ny, Nz, dx, dy, dz, iprint, conc);
 
-
   //evolution loop
   for (iprint=istep; iprint<=nstep; iprint+=istep){
 
     //get laplacian1
-
     laplacian(Nx, Ny, Nz, dx, dy, dz, conc, lap_con);
 
     //get Free Energy
@@ -100,15 +71,14 @@ int main(){
     //write solution to file
     write_to_VTK(Nx, Ny, Nz, dx, dy, dz, iprint, conc);
 
-
-
   }
 
   // deallocate memory
   array_deallocate(Ny, conc);
   array_deallocate(Ny, random_ZeroToOne_array);
   array_deallocate(Ny, lap_dummy);
-
-
+  array_deallocate(Ny, lap_con);
+  array_deallocate(Ny, lap2_con);
+  array_deallocate(Ny, dfdcon);
   return 0;
 }

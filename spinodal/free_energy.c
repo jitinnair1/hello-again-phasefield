@@ -1,6 +1,6 @@
 #include "spinodal.h"
 
-void free_energy(int nx, int ny, float **conc, float dfdcon[nx][ny]){
+float** free_energy(int nx, int ny, float **conc, float **dfdcon){
   float A = 1.0;
   int i, j;
   for (i=0; i<nx; i++ ){
@@ -9,5 +9,6 @@ void free_energy(int nx, int ny, float **conc, float dfdcon[nx][ny]){
       -2.0*(conc[i][j]*conc[i][j])*(1.0-conc[i][j]));
     }
   }
+  return dfdcon;
 
 }
