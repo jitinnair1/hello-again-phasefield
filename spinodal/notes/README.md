@@ -6,13 +6,13 @@ Variable sized arrays are supported by C99 standard which can be used during com
 
 ## Memory Allocation
 
-I first used `memset()` for memory allocation. `memset()` can be used easily for initiallizing arrays with -1, 0  or 1. It can also be modified for initialising with some other value.
+`memset()` can be used easily for initiallizing arrays with -1, 0  or 1. It can also be modified for initialising with some other value.
 ```c
 // for 2D array
 memset(array, 0, sizeof(array[0][0]) * Nx * Ny);
 ```
 
-However, with floating point values, using `memset()` gives incorrect values. NOTE: `<string.h>` must be included to use `memset()`.(Refer notes/memset.c for details)
+However, with floating point values, using `memset()` may result in incorrect values. NOTE: `<string.h>` must be included to use `memset()`.(Refer notes/memset.c for details)
 
 ```bash
 conc[100][97] = 0.000000
