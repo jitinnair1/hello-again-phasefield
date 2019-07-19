@@ -1,16 +1,18 @@
+# Spinodal Decomposition in C
+
 ## Variable sized arrays
 
+Variable sized arrays are supported by C99 standard which can be used during compilation with a `-std=c99` flag.
 
 ## Memory Allocation
 
-I first used `memset()` for memory allocation. `memset()` can be used easily for initiallizing arrays with -1, 0  or 1. It can also be modified for initialising with some other value. However, with floating point values, using `memset()` gives incorrect values. NOTE: `<string.h>` must be included to use `memset()`.
-
+I first used `memset()` for memory allocation. `memset()` can be used easily for initiallizing arrays with -1, 0  or 1. It can also be modified for initialising with some other value.
 ```c
 // for 2D array
 memset(array, 0, sizeof(array[0][0]) * Nx * Ny);
 ```
 
-`memset()` in this case results in such an output. (Refer notes/memset.c for details)
+However, with floating point values, using `memset()` gives incorrect values. NOTE: `<string.h>` must be included to use `memset()`.(Refer notes/memset.c for details)
 
 ```bash
 conc[100][97] = 0.000000
@@ -31,9 +33,11 @@ To figure out where the segmentation fault lied in the erroneous versions, I tri
 
 ```bash
 Reading symbols from ./a.out...
-Reading symbols from /Users/jitinnair/OneDrive - Indian Institute of Science/TheGrind/Code/phasefieldC/spinodal/notes/a.out.dSYM/Contents/Resources/DWARF/a.out...
+Reading symbols from /Users/jitinnair/OneDrive - Indian Institute of Science/
+TheGrind/Code/phasefieldC/spinodal/notes/a.out.dSYM/Contents/Resources/DWARF/a.out...
 (gdb) r
-Starting program: /Users/jitinnair/OneDrive - Indian Institute of Science/TheGrind/Code/phasefieldC/spinodal/notes/a.out
+Starting program: /Users/jitinnair/OneDrive - Indian Institute of Science/
+TheGrind/Code/phasefieldC/spinodal/notes/a.out
 [New Thread 0x1003 of process 74135]
 ```
 

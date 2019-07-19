@@ -3,8 +3,8 @@
 int main(){
 
   //system Configuration
-  int Nx=99,
-  Ny=99,
+  int Nx=199,
+  Ny=199,
   Nz=0;
 
   float dx=0.5,
