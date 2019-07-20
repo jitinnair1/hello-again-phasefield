@@ -1,7 +1,7 @@
 #include "spinodal.h"
 
 float** array_allocate(int nx, int ny, float **array){
-  int m=nx+2;
+  int m=nx;
 
   // dynamically create array of pointers of size m
   array = calloc(m, sizeof(float *));

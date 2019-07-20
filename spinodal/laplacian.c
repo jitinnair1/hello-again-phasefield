@@ -13,29 +13,29 @@ float** laplacian(
 
     for (i=0; i<=nx; i++ ){
       for (j=0; j<=ny; j++ ){
-        jp=j+1;
-        jm=j-1;
+        jp=j-1;
+        jm=j+1;
 
-        ip=i+1;
-        im=i-1;
+        ip=i-1;
+        im=i+1;
 
-        if(im < 0){
-          im=nx;
+        if(ip < 0){
+          ip=nx;
           count1+=1;
         }
 
-        if(ip > nx){
-          ip=0;
+        if(im > nx){
+          im=0;
           count2+=1;
         }
 
-        if(jm < 0){
-          jm=ny;
+        if(jp < 0){
+          jp=ny;
           count3+=1;
         }
 
-        if(jp > ny){
-          jp=0;
+        if(jm > ny){
+          jm=0;
           count4+=1;
         }
 
