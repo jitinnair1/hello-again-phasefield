@@ -13,8 +13,8 @@ int main(){
 
   //time integration parameters:
   int nstep=10000,
-  istep=50,
-  iprint=0;
+  iprint=50,
+  istep=0;
 
   float dt=0.01;
 
@@ -49,32 +49,38 @@ int main(){
   prep_microstructure(Nx, Ny, conc, c0, noise, random_ZeroToOne_array);
 
   //write initial microstructure
-  write_to_VTK(Nx, Ny, Nz, dx, dy, dz, iprint, conc);
+  write_to_VTK(Nx, Ny, Nz, dx, dy, dz, istep, conc);
 
   //evolution loop
-  for (iprint=istep; iprint<=nstep; iprint+=istep){
+  for (istep=1; istep<=nstep; istep+=1){
 
-    // ***TEST*** : Check if PBC is implemented correctly for correct array size
-    //get laplacian1
-    lap_con=laplacian(Nx, Ny, Nz, dx, dy, dz, conc, lap_con);
+    for (int i=0; i<=nx; i++){
+      for (int j = 0; j <=ny; j++) {
+        // ***TEST*** : Check if PBC is implemented correctly for correct array size
+        //get laplacian1
+        lap_con[i][j]=laplacian(Nx, Ny, Nz, dx, dy, dz, conc[i][j], i, j);
 
-    // ***TEST*** : Check if free enrgy is computed correctly for correct array size
-    //get Free Energy
-    dfdcon=free_energy(Nx, Ny, conc, dfdcon);
+        // ***TEST*** : Check if free enrgy is computed correctly for correct array size
+        //get Free Energy
+        dfdcon[i][j]=free_energy(Nx, Ny, conc[i][j]);
 
-    // ***TEST*** : Check if constant values make sense and coputaion is done correctly
-    //solve1
-    lap_dummy=solve(Nx, Ny, grad_coef, dfdcon, lap_con, lap_dummy);
+        // ***TEST*** : Check if constant values make sense and coputaion is done correctly
+        //solve1
+        lap_dummy=solve(Nx, Ny, grad_coef, dfdcon, lap_con, lap_dummy);
 
-    //get laplacian2
+        //get laplacian2
 
-    lap2_con=laplacian(Nx, Ny, Nz, dx, dy, dz, lap_dummy, lap2_con);
+        lap2_con=laplacian(Nx, Ny, Nz, dx, dy, dz, lap_dummy, lap2_con);
 
-    //solve2
-    conc=solve2(Nx, Ny, dt, mobility, lap2_con, conc);
+        //solve2
+        conc=solve2(Nx, Ny, dt, mobility, lap2_con, conc);
+      }
+    }
 
-    //write solution to file
-    write_to_VTK(Nx, Ny, Nz, dx, dy, dz, iprint, conc);
+    if(istep % iprint == 0){
+      //write solution to file
+      write_to_VTK(Nx, Ny, Nz, dx, dy, dz, istep, conc);
+    }
 
   }
 
