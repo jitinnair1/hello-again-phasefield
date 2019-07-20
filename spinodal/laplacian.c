@@ -4,7 +4,7 @@
 float** laplacian(
   int nx, int ny, int nz,
   float dx, float dy, float dz,
-  float **conc, int i, int j){
+  float **conc, float **lap_con, int i, int j){
 
     // use standard 5 point stencil
     int jp, jm, ip, im;

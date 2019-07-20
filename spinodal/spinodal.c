@@ -13,7 +13,7 @@ int main(){
 
   //time integration parameters:
   int nstep=10000,
-  iprint=50,
+  iprint=500,
   istep=0;
 
   float dt=0.01;
@@ -54,26 +54,30 @@ int main(){
   //evolution loop
   for (istep=1; istep<=nstep; istep+=1){
 
-    for (int i=0; i<=nx; i++){
-      for (int j = 0; j <=ny; j++) {
+    for (int i=0; i<=Nx; i++){
+      for (int j = 0; j <=Ny; j++) {
         // ***TEST*** : Check if PBC is implemented correctly for correct array size
         //get laplacian1
-        lap_con[i][j]=laplacian(Nx, Ny, Nz, dx, dy, dz, conc[i][j], i, j);
+        lap_con=laplacian(Nx, Ny, Nz, dx, dy, dz, conc, lap_con, i, j);
 
         // ***TEST*** : Check if free enrgy is computed correctly for correct array size
         //get Free Energy
-        dfdcon[i][j]=free_energy(Nx, Ny, conc[i][j]);
+        dfdcon=free_energy(Nx, Ny, conc, dfdcon, i, j);
 
         // ***TEST*** : Check if constant values make sense and coputaion is done correctly
         //solve1
-        lap_dummy=solve(Nx, Ny, grad_coef, dfdcon, lap_con, lap_dummy);
+        lap_dummy=solve(Nx, Ny, grad_coef, dfdcon, lap_con, lap_dummy, i, j);
+      }
+    }
 
+    for (int i=0; i<=Nx; i++){
+      for (int j = 0; j <=Ny; j++) {
         //get laplacian2
 
-        lap2_con=laplacian(Nx, Ny, Nz, dx, dy, dz, lap_dummy, lap2_con);
+        lap2_con=laplacian(Nx, Ny, Nz, dx, dy, dz, lap_dummy, lap2_con, i, j);
 
         //solve2
-        conc=solve2(Nx, Ny, dt, mobility, lap2_con, conc);
+        conc=solve2(Nx, Ny, dt, mobility, lap2_con, conc, i, j);
       }
     }
 
