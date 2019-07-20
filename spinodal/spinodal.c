@@ -2,7 +2,7 @@
 
 int main(){
 
-  //system Configuration
+  // system Configuration
   int Nx=199,
   Ny=199,
   Nz=0;
@@ -11,21 +11,21 @@ int main(){
   dy=1.0,
   dz=0.0;
 
-  //time integration parameters:
+  // time integration parameters:
   int nstep=10000,
   iprint=1000,
   istep=0;
 
   float dt=0.01;
 
-  //material specific parameters
+  // material specific parameters
   float c0 = 0.40,
   noise=0.02,
   mobility = 1.0,
   grad_coef= 0.5;
 
 
-  //memory allocation
+  // memory allocation
   float **conc=0,
   **random_ZeroToOne_array=0,
   **lap_con=0,
@@ -43,51 +43,52 @@ int main(){
   // ***TEST*** : Check size of all arrays and if they are initialized to zero
 
 
-  //get array of random numbers between 0 and 1 for setting initial microstructure
+  // get array of random numbers between 0 and 1 for setting initial microstructure
   rand_ZeroToOne(Nx, Ny, random_ZeroToOne_array);
 
 
   // ***TEST*** : Check if Nx * Ny random numbers are being generated between 0 and 1
 
 
-  //generate initial microstructure
+  // generate initial microstructure
   prep_microstructure(Nx, Ny, conc, c0, noise, random_ZeroToOne_array);
 
-  //write initial microstructure
+  // write initial microstructure
   write_to_VTK(Nx, Ny, Nz, dx, dy, dz, istep, conc);
 
-  //evolution loop
+  // evolution loop
   for (istep=1; istep<=nstep; istep+=1){
 
+    // sweep across grid for given timestep
     for (int i=0; i<=Nx; i++){
       for (int j = 0; j <=Ny; j++) {
 
-        //get laplacian1
+        // get laplacian1
         lap_con=laplacian(Nx, Ny, Nz, dx, dy, dz, conc, lap_con, i, j);
 
         // ***TEST*** : Check if PBC is implemented correctly for correct array size
 
-        //get Free Energy
+        // get Free Energy
         dfdcon=free_energy(Nx, Ny, conc, dfdcon, i, j);
 
         // ***TEST*** : Check if free enrgy is computed correctly for correct array size
 
-        //solve1
+        // solve1
         lap_dummy=solve(Nx, Ny, grad_coef, dfdcon, lap_con, lap_dummy, i, j);
 
         // ***TEST*** : Check if constant values make sense and coputaion is done correctly
 
-        //get laplacian2
+        // get laplacian2
         lap2_con=laplacian(Nx, Ny, Nz, dx, dy, dz, lap_dummy, lap2_con, i, j);
 
-        //solve2
+        // solve2
         conc=solve2(Nx, Ny, dt, mobility, lap2_con, conc, i, j);
-        
+
       }
     }
 
     if(istep % iprint == 0){
-      //write solution to file
+      // write solution to file for every iprint timestep
       write_to_VTK(Nx, Ny, Nz, dx, dy, dz, istep, conc);
     }
 
