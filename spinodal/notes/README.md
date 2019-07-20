@@ -62,3 +62,19 @@ ptr = (int*) malloc(100 * sizeof(int));
 // ptr = (cast-type*)calloc(n, element-size);
 ptr = (float*) calloc(25, sizeof(float));
 ```
+## Test Functions
+
+- Check size of all arrays and if they are initialised to zero
+- Check if Nx * Ny random numbers are being generated between 0 and 1
+- Check if PBC is implemented correctly for correct array size
+- Check if free energy is computed correctly for correct array size
+- Check if constant values used (parameters) make sense and computation is done correctly
+- Check if deallocation is working
+
+## Slow/Unclear evolution in earlier versions
+
+In the initial version, the values of laplacian and free energy were not updated correctly. They were calculated for all grid points at a given time and then plugged into the equation used for evolution. This leads to incorrect evolution of the composition.
+
+In the later version, the evolution loop sweeps across every i-th and j-th point while simultaneously solving the equation at [i, j] and updating the concentration value of [i, j] in every iteration.
+
+In such a case, the concentration values used for [i, j+1] will be the "more correct" values since the concentration of the [i, j] point would have been updated in the preceding iteration. This is what leads to the evolution.
