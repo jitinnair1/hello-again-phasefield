@@ -13,14 +13,14 @@ int main(){
 
   //time integration parameters:
   int nstep=10000,
-  iprint=500,
+  iprint=1000,
   istep=0;
 
   float dt=0.01;
 
   //material Specific Parameters
   float c0 = 0.40,
-  noise=1.0,
+  noise=0.02,
   mobility = 1.0,
   grad_coef= 0.5;
 
