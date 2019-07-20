@@ -7,20 +7,20 @@ int main(){
   Ny=199,
   Nz=0;
 
-  float dx=0.5,
-  dy=0.5,
+  float dx=1.0,
+  dy=1.0,
   dz=0.0;
 
   //time integration parameters:
-  int nstep=25000,
-  istep=1000,
+  int nstep=10000,
+  istep=50,
   iprint=0;
 
-  float dt=0.001;
+  float dt=0.01;
 
   //material Specific Parameters
-  float c0 = 0.50,
-  noise=1,
+  float c0 = 0.40,
+  noise=1.0,
   mobility = 1.0,
   grad_coef= 0.5;
 
@@ -33,6 +33,7 @@ int main(){
   **lap2_con=0,
   **lap_dummy=0;
 
+  // ***TEST*** : Check size of all arrays and if they are initialized to zero
   conc=array_allocate(Nx, Ny, conc);
   random_ZeroToOne_array=array_allocate(Nx, Ny, random_ZeroToOne_array);
   lap_dummy=array_allocate(Nx, Ny, lap_dummy);
@@ -40,6 +41,7 @@ int main(){
   dfdcon=array_allocate(Nx, Ny, dfdcon);
   lap2_con=array_allocate(Nx, Ny, lap2_con);
 
+  // ***TEST*** : Check if Nx * Ny random numbers are being generated between 0 and 1
   //get array of random numbers between 0 and 1 for setting initial microstructure
   rand_ZeroToOne(Nx, Ny, random_ZeroToOne_array);
 
@@ -52,27 +54,31 @@ int main(){
   //evolution loop
   for (iprint=istep; iprint<=nstep; iprint+=istep){
 
+    // ***TEST*** : Check if PBC is implemented correctly for correct array size
     //get laplacian1
-    laplacian(Nx, Ny, Nz, dx, dy, dz, conc, lap_con);
+    lap_con=laplacian(Nx, Ny, Nz, dx, dy, dz, conc, lap_con);
 
+    // ***TEST*** : Check if free enrgy is computed correctly for correct array size
     //get Free Energy
-    free_energy(Nx, Ny, conc, dfdcon);
+    dfdcon=free_energy(Nx, Ny, conc, dfdcon);
 
+    // ***TEST*** : Check if constant values make sense and coputaion is done correctly
     //solve1
-    solve(Nx, Ny, grad_coef, dfdcon, lap_con, lap_dummy);
+    lap_dummy=solve(Nx, Ny, grad_coef, dfdcon, lap_con, lap_dummy);
 
     //get laplacian2
 
-    laplacian(Nx, Ny, Nz, dx, dy, dz, lap_dummy, lap2_con);
+    lap2_con=laplacian(Nx, Ny, Nz, dx, dy, dz, lap_dummy, lap2_con);
 
     //solve2
-    solve2(Nx, Ny, dt, mobility, lap2_con, conc);
+    conc=solve2(Nx, Ny, dt, mobility, lap2_con, conc);
 
     //write solution to file
     write_to_VTK(Nx, Ny, Nz, dx, dy, dz, iprint, conc);
 
   }
 
+  // ***TEST*** : Check if deallocation is working
   // deallocate memory
   array_deallocate(Ny, conc);
   array_deallocate(Ny, random_ZeroToOne_array);
