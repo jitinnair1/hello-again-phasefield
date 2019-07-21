@@ -7,8 +7,10 @@
 
 float** array_allocate(int nx, int ny, float **array);
 
-fftw_complex** prep_microstructure(int nx, int ny, float **conc, float c0,
-  float noise, float **random_ZeroToOne_array );
+void array_deallocate(int ny, float **array);
+
+void prep_microstructure(int nx, int ny, fftw_complex *conc, float c0,
+float noise, float **random_ZeroToOne_array );
 
 float** rand_ZeroToOne(int nx, int ny, float **random_ZeroToOne_array);
 

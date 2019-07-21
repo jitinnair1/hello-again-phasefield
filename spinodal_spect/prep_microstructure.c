@@ -1,6 +1,6 @@
 #include "spinodal_spect.h"
 
-fftw_complex** prep_microstructure(int nx, int ny, float **conc, float c0,
+void prep_microstructure(int nx, int ny, fftw_complex *conc, float c0,
 float noise, float **random_ZeroToOne_array ) {
   int ii=0;
   int i, j;
@@ -10,5 +10,4 @@ float noise, float **random_ZeroToOne_array ) {
       conc[ii] = c0 + noise*(0.5-random_ZeroToOne_array[i][j]);
     } // end for Nx
   } // end for Ny
-  return conc;
 }
