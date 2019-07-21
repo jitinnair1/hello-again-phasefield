@@ -36,15 +36,15 @@ int main(int argc, char const *argv[]) {
   //initial concentrarion
   prep_microstructure(Nx, Ny, c, c0, noise, random_ZeroToOne_array);
 
-  // print conc values to check if random values are generated
-  int ii;
-  for (size_t i = 0; i < Nx; i++) {
-    for (size_t j = 0; j < Ny; j++) {
-      ii = i*Nx + j;
-      c[ii]=creal(c[ii])/(double)(Nx*Ny);
-      printf("%e\n", c[ii] );
-    }
-  }
+  // // print conc values to check if random values are generated
+  // int ii;
+  // for (size_t i = 0; i < Nx; i++) {
+  //   for (size_t j = 0; j < Ny; j++) {
+  //     ii = i*Nx + j;
+  //     c[ii]=creal(c[ii])/(double)(Nx*Ny);
+  //     printf("%f\n", c[ii] );
+  //   }
+  // }
 
 
   //FFTW Free, Destroy and Cleanup
@@ -58,7 +58,7 @@ int main(int argc, char const *argv[]) {
   fftw_cleanup();
   free(kx);
   free(ky);
-  array_deallocate(random_ZeroToOne_array);
-  
+  array_deallocate(Ny, random_ZeroToOne_array);
+
   return 0;
 }
