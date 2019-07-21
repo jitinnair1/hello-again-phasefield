@@ -6,9 +6,9 @@ TARGET=spinodal_spect
 LIBRARIES=-iquote /usr/local/include
 LINKER=-L/usr/local/lib
 DEPENDENCIES= array_allocate.c \
+							array_deallocate.c \
 							prep_microstructure.c \
 							rand_ZeroToOne.c
-
 
 $(TARGET): $(TARGET).c $(DEPENDENCIES)
 	$(CC) $(LMFLAGS) $(TARGET).c $(DEPENDENCIES) -o $(TARGET).out $(CFLAGS) $(LIBRARIES) $(LINKER)

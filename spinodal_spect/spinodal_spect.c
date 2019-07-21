@@ -47,7 +47,6 @@ int main(int argc, char const *argv[]) {
   }
 
 
-
   //FFTW Free, Destroy and Cleanup
   fftw_destroy_plan(p1);
   fftw_destroy_plan(p2);
@@ -59,6 +58,7 @@ int main(int argc, char const *argv[]) {
   fftw_cleanup();
   free(kx);
   free(ky);
-
+  array_deallocate(random_ZeroToOne_array);
+  
   return 0;
 }
