@@ -3,6 +3,10 @@
 #include <math.h>
 #include <complex.h>
 #include <fftw3.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <gperftools/profiler.h>
 
 
 float** array_allocate(int nx, int ny, float **array);
@@ -16,4 +20,4 @@ float** rand_ZeroToOne(int nx, int ny, float **random_ZeroToOne_array);
 
 void write_to_VTK( int nx, int ny, int nz,
   float dx, float dy, float dz,
-  int iprint, float **conc );
+  int iprint, int NxNy, float conc[NxNy] );

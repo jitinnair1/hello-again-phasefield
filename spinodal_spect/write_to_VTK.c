@@ -2,11 +2,11 @@
 
 void write_to_VTK( int nx, int ny, int nz,
   float dx, float dy, float dz,
-  int iprint, float **conc ) {
+  int iprint, int NxNy, float conc[NxNy] ) {
 
   // write data for every istep in VTK file format
-  int Nx=nx+1,
-  Ny=ny+1,
+  int Nx=nx,
+  Ny=ny,
   Nz=nz+1,
   num_points=0;
 
@@ -36,8 +36,8 @@ void write_to_VTK( int nx, int ny, int nz,
   int p, q;
   float x, y, z;
 
-  for (p=0; p<Nx; p++){
-    for (q=0; q< Ny; q++){
+  for (p=0; p < Nx ; p++){
+    for (q=0; q < Ny; q++){
         x = p*dx;
         y = q*dy;
         z = 0.0;
@@ -50,10 +50,11 @@ void write_to_VTK( int nx, int ny, int nz,
   fprintf(fp,"POINT_DATA %6d\n", num_points);
   fprintf(fp,"SCALARS CONC  float  1\n");
   fprintf(fp,"LOOKUP_TABLE default\n");
-  int i, j;
+  int i, j, ii;
   for (i = 0; i < Nx; i++) {
     for (j = 0; j < Ny; j++) {
-      fprintf(fp, "%f\n", conc[i][j] );
+      ii=i*Nx + j;
+      fprintf(fp, "%lf\n", conc[ii] );
     }
   }
   fclose(fp);
