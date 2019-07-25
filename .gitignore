@@ -7,3 +7,5 @@
 *.pvd
 *.pdf
 ref/
+*.txt
+*.prof
