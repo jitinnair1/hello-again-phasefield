@@ -2,7 +2,10 @@
 
 int main(int argc, char const *argv[]) {
 
-  // declarations
+  //start clock
+  clock_t tic = clock();
+
+  //declarations
   int Nx=128, Ny=128, Nz=0;
   float dx=1.0, dy=1.0, dz=0.0;
   double *kx,*ky;
@@ -20,7 +23,7 @@ int main(int argc, char const *argv[]) {
   iprint=400,
   istep=0;
 
-  // FFTW allocations
+  //FFTW allocations
   c=(fftw_complex*)fftw_malloc(Nx*Ny*sizeof(fftw_complex));
   ctilde=(fftw_complex*)fftw_malloc(Nx*Ny*sizeof(fftw_complex));
 
@@ -65,6 +68,9 @@ int main(int argc, char const *argv[]) {
   // write initial concentration to file
   write_to_VTK(Nx, Ny, Nz, dx, dy, dz, istep, NxNy, conc );
 
+  //print completion status
+  printf("Timestep %d completed\n", istep );
+
   //Boundary condition
   for(i=0; i<Nx; i++){
     if(i < Nx/2)
@@ -98,10 +104,8 @@ int main(int argc, char const *argv[]) {
     for(i=0; i<Nx; i++) {
       for(j=0; j<Ny; j++) {
         ii=i*Nx+j;
-        ctilde[ii]=(ctilde[ii]-((kx[i]*kx[i]+ky[j]*ky[j])*
-        dt*diffusivity*gtilde[ii]))/
-        (1+2*kappa*diffusivity*(kx[i]*kx[i]+ky[j]*ky[j])*
-        (kx[i]*kx[i]+ky[j]*ky[j])*dt)
+        ctilde[ii]=(ctilde[ii]-((kx[i]*kx[i]+ky[j]*ky[j])*dt*diffusivity*gtilde[ii]))/
+        (1+2*kappa*diffusivity*(kx[i]*kx[i]+ky[j]*ky[j])*(kx[i]*kx[i]+ky[j]*ky[j])*dt)
         + _Complex_I*0.0;
       }
     }
@@ -123,6 +127,9 @@ int main(int argc, char const *argv[]) {
 
       // write initial concentration to file
       write_to_VTK(Nx, Ny, Nz, dx, dy, dz, istep, NxNy, conc );
+
+      //print completion status
+      printf("Timestep %d completed\n", istep );
     }
 
     //exchanging the values
@@ -144,10 +151,15 @@ int main(int argc, char const *argv[]) {
   fftw_free(ctilde);
   fftw_free(g);
   fftw_free(gtilde);
-  fftw_cleanup();
   free(kx);
   free(ky);
   array_deallocate(Ny, random_ZeroToOne_array);
+  fftw_cleanup();
+
+  // end clock
+  clock_t toc = clock();
+  printf("Elapsed: %f seconds\n", (double)(toc - tic) / CLOCKS_PER_SEC);
+
 
   return 0;
 }
