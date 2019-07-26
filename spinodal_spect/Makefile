@@ -21,7 +21,7 @@ debug: $(TARGET).c $(DEPENDENCIES)
 time: $(TARGET).c $(DEPENDENCIES)
 		$(CC) $(LMFLAGS) $(TARGET).c $(DEPENDENCIES) -o $(TARGET).out $(CFLAGS) $(LIBRARIES) $(LINKER)
 		CPUPROFILE=$(TARGET).prof ./$(TARGET).out
-		pprof --functions --text $(TARGET).out $(TARGET).prof > $(TARGET).txt
+		pprof --text $(TARGET).out $(TARGET).prof > $(TARGET).txt
 
 clean:
 	-rm -rf $(TARGET).out.*
