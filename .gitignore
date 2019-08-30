@@ -1,11 +1,21 @@
+#OS
 *.DS_Store
+
+#C and Paraview
 *.o
 *.out
 *.out.dSYM
 *.vtk
 *.pvsm
 *.pvd
+
+#Results
 *.pdf
-ref/
 *.txt
 *.prof
+
+#Folders
+.idea/
+cmake-build-debug/
+ref/
+output/
