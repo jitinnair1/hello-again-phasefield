@@ -8,6 +8,7 @@
 *.vtk
 *.pvsm
 *.pvd
+**/Makefile
 
 #Results
 *.pdf
