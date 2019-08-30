@@ -53,6 +53,7 @@ int main() {
 
     //Write results to file in fpointer after istep iterations
     write_to_VTK( nx, ny, nz, dx, dy, dz, iprint, conc );
+    printf("Completed Timestep %d\n", iprint);
 
   }
 }
