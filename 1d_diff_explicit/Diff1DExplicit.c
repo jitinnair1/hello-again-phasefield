@@ -7,16 +7,17 @@ int main() {
   int j, i, nx, ny, nz, istep, iprint, N, nstep;
 
   //Initial system configuration
-  N=255;
-  D=1.0;
+
+  N=255;                //Loops go from 0 to N both inclusive
+  D=1.0;                //Diffusivity
   dx=0.5;
   dy=0.0;
   dz=0.0;
   dt=0.001;
-  istep=1000;
-  iprint=0;
-  nstep=200000;
-  alpha=D*dt/(dx*dx);
+  istep=100;            //timesteps after which values are written to file
+  iprint=0;             //variable to print initial state
+  nstep=1000;           //total number of timesteps
+  alpha=D*dt/(dx*dx);   //parameter used for computation
 
   //file write parameters
   nx=N;
