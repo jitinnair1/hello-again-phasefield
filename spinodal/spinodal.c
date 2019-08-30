@@ -90,6 +90,7 @@ int main(){
     if(istep % iprint == 0){
       // write solution to file for every iprint timestep
       write_to_VTK(Nx, Ny, Nz, dx, dy, dz, istep, conc);
+      printf("Completed Timestep %d\n", istep);
     }
 
   }
