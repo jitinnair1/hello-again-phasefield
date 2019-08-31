@@ -7,12 +7,12 @@ int main(int argc, char const *argv[]) {
 
   //declarations
   int Nx=128, Ny=128, Nz=0;
-  float dx=1.0, dy=1.0, dz=0.0;
+  double dx=1.0, dy=1.0, dz=0.0;
   double *kx,*ky;
   fftw_complex *c,*ctilde,*g,*gtilde;
   fftw_plan p1,p2,p3;
 
-  float c0=0.4,
+  double c0=0.4,
   dt=0.1,
   diffusivity=1.0,
   kappa=1.0,
@@ -51,19 +51,33 @@ int main(int argc, char const *argv[]) {
 
   // get duplicate array and initialise it
   int NxNy=Nx*Ny;
-  float conc[NxNy];
-  for (size_t i = 0; i < NxNy; i++) {
+  double conc[NxNy];
+  for (i = 0; i < NxNy; i++) {
     conc[i]=0.0;
   }
 
-  //write real part to conc[]
-  for (i=0; i < Nx; i++){
-    for (j=0; j < Ny; j++){
-      ii=i*Nx+j;
-      c[ii] = c0 + noise*(0.5-random_ZeroToOne_array[i][j]);
-      conc[ii] = creal(c[ii]);
+  //add noise and prepare microstructure
+//  for (i=0; i < Nx; i++){
+//    for (j=0; j < Ny; j++){
+//      ii=i*Nx+j;
+//      c[ii] = c0 + noise*(0.5-random_ZeroToOne_array[i][j]);
+//      conc[ii] = creal(c[ii]);
+//    }
+//  }
+
+    for (i = 0; i < Nx; ++i) {
+        ii=i*Nx;
+        c[ii] = c0 + noise * (0.5 - random_ZeroToOne_array[i][0]);
+        conc[ii] = creal(c[ii]);
     }
-  }
+
+    for (i = 0; i < Nx; i++) {
+        for (j = 0; j < Ny; ++j) {
+            ii=i*Nx+j;
+            c[ii]=c[i*Nx];
+            conc[ii] = creal(c[ii]);
+        }
+    }
 
   // write initial concentration to file
   write_to_VTK(Nx, Ny, Nz, dx, dy, dz, istep, NxNy, conc );
