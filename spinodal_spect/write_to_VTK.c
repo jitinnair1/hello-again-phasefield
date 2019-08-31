@@ -1,8 +1,8 @@
 #include "spinodal_spect.h"
 
 void write_to_VTK( int nx, int ny, int nz,
-  float dx, float dy, float dz,
-  int iprint, int NxNy, float conc[NxNy] ) {
+  double dx, double dy, double dz,
+  int iprint, int NxNy, double conc[NxNy] ) {
 
   // write data for every istep in VTK file format
   int Nx=nx,
@@ -34,7 +34,7 @@ void write_to_VTK( int nx, int ny, int nz,
   fprintf(fp, "DIMENSIONS %6d %6d %6d\n", Nx, Ny, Nz );
   fprintf(fp, "POINTS %7d  float\n", num_points );
   int p, q;
-  float x, y, z;
+  double x, y, z;
 
   for (p=0; p < Nx ; p++){
     for (q=0; q < Ny; q++){

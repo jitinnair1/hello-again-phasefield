@@ -7,7 +7,7 @@ int main(){
   Ny=199,
   Nz=0;
 
-  float dx=1.0,
+  double dx=1.0,
   dy=1.0,
   dz=0.0;
 
@@ -16,10 +16,10 @@ int main(){
   iprint=1000,
   istep=0;
 
-  float dt=0.01;
+  double dt=0.01;
 
   // material specific parameters
-  float c0 = 0.40,
+  double c0 = 0.40,
   noise=0.02,
   mobility = 1.0,
   grad_coef= 0.5;
@@ -71,12 +71,12 @@ int main(){
         // get Free Energy
         dfdcon=free_energy(Nx, Ny, conc, dfdcon, i, j);
 
-        // ***TEST*** : Check if free enrgy is computed correctly for correct array size
+        // ***TEST*** : Check if free energy is computed correctly for correct array size
 
         // solve1
         lap_dummy=solve(Nx, Ny, grad_coef, dfdcon, lap_con, lap_dummy, i, j);
 
-        // ***TEST*** : Check if constant values make sense and coputaion is done correctly
+        // ***TEST*** : Check if constant values make sense and computation is done correctly
 
         // get laplacian2
         lap2_con=laplacian(Nx, Ny, Nz, dx, dy, dz, lap_dummy, lap2_con, i, j);
@@ -103,7 +103,7 @@ int main(){
   array_deallocate(Ny, lap2_con);
   array_deallocate(Ny, dfdcon);
 
-  // ***TEST*** : Check if deallocation is working
+  // ***TEST*** : Check if de-allocation is working
 
 
   return 0;

@@ -1,7 +1,7 @@
 #include "spinodal.h"
 
 void write_to_VTK( int nx, int ny, int nz,
-  float dx, float dy, float dz,
+  double dx, double dy, double dz,
   int iprint, float **conc ) {
 
   // write data for every istep in VTK file format

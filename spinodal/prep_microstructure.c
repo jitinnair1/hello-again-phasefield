@@ -1,7 +1,7 @@
 #include "spinodal.h"
 
-float** prep_microstructure(int nx, int ny, float **conc, float c0,
-float noise, float **random_ZeroToOne_array ) {
+float** prep_microstructure(int nx, int ny, float **conc, double c0,
+double noise, float **random_ZeroToOne_array ) {
   int i, j;
   for (i=0; i<=nx; i++){
     for (j=0; j<=ny; j++){

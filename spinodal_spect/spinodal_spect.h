@@ -13,11 +13,11 @@ float** array_allocate(int nx, int ny, float **array);
 
 void array_deallocate(int ny, float **array);
 
-void prep_microstructure(int nx, int ny, fftw_complex *conc, float c0,
-float noise, float **random_ZeroToOne_array );
+void prep_microstructure(int nx, int ny, fftw_complex *conc, double c0,
+        double noise, float **random_ZeroToOne_array );
 
 float** rand_ZeroToOne(int nx, int ny, float **random_ZeroToOne_array);
 
 void write_to_VTK( int nx, int ny, int nz,
-  float dx, float dy, float dz,
-  int iprint, int NxNy, float conc[NxNy] );
+        double dx, double dy, double dz,
+        int iprint, int NxNy, double conc[NxNy] );

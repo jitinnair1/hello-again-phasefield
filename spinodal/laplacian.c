@@ -3,7 +3,7 @@
 // Generate discrete laplacian
 float** laplacian(
   int nx, int ny, int nz,
-  float dx, float dy, float dz,
+  double dx, double dy, double dz,
   float **conc, float **lap_con, int i, int j){
 
     // use standard 5 point stencil
