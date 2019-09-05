@@ -19,8 +19,8 @@ int main(int argc, char const *argv[]) {
   A=1.0,
   noise=0.02;
 
-  int nstep=10000,
-  iprint=400,
+  int nstep=1,
+  iprint=1,
   istep=0;
 
   //FFTW allocations
@@ -52,9 +52,9 @@ int main(int argc, char const *argv[]) {
   // get duplicate array and initialise it
   int NxNy=Nx*Ny;
   double conc[NxNy];
-  for (i = 0; i < NxNy; i++) {
-    conc[i]=0.0;
-  }
+//  for (i = 0; i < NxNy; i++) {
+//    conc[i]=0.0;
+//  }
 
   //add noise and prepare microstructure
 //  for (i=0; i < Nx; i++){
@@ -81,6 +81,20 @@ int main(int argc, char const *argv[]) {
 
   // write initial concentration to file
   write_to_VTK(Nx, Ny, Nz, dx, dy, dz, istep, NxNy, conc );
+
+    FILE *file;
+    char filename[30];
+    sprintf(filename, "./output/conc0FFTWbinary.txt");
+    file = fopen(filename,"w");
+    for (i = 0; i < Nx; i++) {
+        for (j = 0; j < Ny; ++j) {
+            fprintf(file, "%f", conc[i*Ny+j]);
+            fprintf(file,"\t");
+        }
+        fprintf(file,"\n");
+    }
+    fclose(file);
+
 
   //print completion status
   printf("Timestep %d completed\n", istep );

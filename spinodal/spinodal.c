@@ -3,8 +3,8 @@
 int main(){
 
   // system Configuration
-  int Nx=199,
-  Ny=199,
+  int Nx=127,
+  Ny=127,
   Nz=0;
 
   double dx=1.0,
@@ -12,8 +12,8 @@ int main(){
   dz=0.0;
 
   // time integration parameters:
-  int nstep=10000,
-  iprint=1000,
+  int nstep=1,
+  iprint=1,
   istep=0;
 
   double dt=0.01;
@@ -55,13 +55,27 @@ int main(){
 
   // write initial microstructure
   write_to_VTK(Nx, Ny, Nz, dx, dy, dz, istep, conc);
+  printf("Completed Timestep %d\n", istep);
+
+    FILE *file;
+    char filename[30];
+    sprintf(filename, "./output/conc0FDMbinary.txt");
+    file = fopen(filename,"w");
+    for (int i = 0; i < Nx; i++) {
+        for (int j = 0; j < Ny; ++j) {
+            fprintf(file, "%f", conc[i][j]);
+            fprintf(file,"\t");
+        }
+        fprintf(file,"\n");
+    }
+    fclose(file);
 
   // evolution loop
   for (istep=1; istep<=nstep; istep+=1){
 
     // sweep across grid for given timestep
     for (int i=0; i<=Nx; i++){
-      for (int j = 0; j <=Ny; j++) {
+      for (int j=0; j<=Ny; j++) {
 
         // get laplacian1
         lap_con=laplacian(Nx, Ny, Nz, dx, dy, dz, conc, lap_con, i, j);
