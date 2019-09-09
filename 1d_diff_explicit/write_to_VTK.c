@@ -1,6 +1,6 @@
 #include "Diff1DExplicit.h"
 
-void write_to_VTK( int nx, int ny, int nz, float dx, float dy, float dz, int iprint, float conc[] ) {
+void write_to_VTK( int nx, int ny, int nz, double dx, double dy, double dz, int iprint, double conc[] ) {
 
   // write data for every istep in VTK file format
   int Nx=nx+1,
@@ -34,7 +34,7 @@ void write_to_VTK( int nx, int ny, int nz, float dx, float dy, float dz, int ipr
   for (p=0; p< Nx; p++){
     for (q=0; q< Ny; q++){
       for (r=0; r< Nz; r++){
-        float x, y, z;
+        double x, y, z;
         x = p*dx;
         y = q*dy;
         z = r*dz;

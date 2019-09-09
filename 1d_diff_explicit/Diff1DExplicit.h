@@ -4,4 +4,4 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-void write_to_VTK( int nx, int ny, int nz, float dx, float dy, float dz, int iprint, float conc[] );
+void write_to_VTK( int nx, int ny, int nz, double dx, double dy, double dz, int iprint, double conc[] );

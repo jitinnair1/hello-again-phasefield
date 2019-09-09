@@ -25,7 +25,7 @@ int main() {
   nz=0;
 
   //Initial conditions and profile
-  float conc[N];
+ double conc[N];
   conc[0]=1.0;
   for (i=1; i<N; i++){
     conc[i]=0.0;
