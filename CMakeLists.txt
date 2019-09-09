@@ -18,6 +18,7 @@ link_directories(/usr/local/lib/)
 include_directories(1d_diff_explicit)
 include_directories(spinodal)
 include_directories(spinodal_spect)
+include_directories(spinodal_ternary)
 
 add_executable(1d_diff_explicit
         1d_diff_explicit/Diff1DExplicit.c
@@ -47,10 +48,20 @@ add_executable(spinodal_spect
         spinodal_spect/spinodal_spect.h
         spinodal_spect/write_to_VTK.c)
 
+add_executable(spinodal_ternary
+        spinodal_ternary/array_allocate.c
+        spinodal_ternary/array_deallocate.c
+        spinodal_ternary/prep_microstructure.c
+        spinodal_ternary/rand_ZeroToOne.c
+        spinodal_ternary/ternary_coarsening.c
+        spinodal_ternary/ternary_coarsening.h
+        spinodal_ternary/write_to_VTK.c)
+
 # Link Library to Target
 target_link_libraries(1d_diff_explicit m)
 target_link_libraries(spinodal m)
 target_link_libraries(spinodal_spect fftw3 m)
+target_link_libraries(spinodal_ternary fftw3 m)
 
 
 
