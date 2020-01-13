@@ -12,8 +12,8 @@ int main(){
   dz=0.0;
 
   // time integration parameters:
-  int nstep=1,
-  iprint=1,
+  int nstep=100,
+  iprint=10,
   istep=0;
 
   double dt=0.01;

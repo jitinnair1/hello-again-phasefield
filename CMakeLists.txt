@@ -19,6 +19,7 @@ include_directories(1d_diff_explicit)
 include_directories(spinodal)
 include_directories(spinodal_spect)
 include_directories(spinodal_ternary)
+include_directories(spinodal_elasticity)
 
 add_executable(1d_diff_explicit
         1d_diff_explicit/Diff1DExplicit.c
@@ -44,7 +45,16 @@ add_executable(spinodal_spect
         spinodal_spect/rand_ZeroToOne.c
         spinodal_spect/spinodal_spect.c
         spinodal_spect/spinodal_spect.h
-        spinodal_spect/write_to_VTK.c spinodal_spect/write_init_conc.c)
+        spinodal_spect/write_to_VTK.c
+        spinodal_spect/write_init_conc.c)
+
+add_executable(spinodal_elasticity
+        spinodal_elasticity/prep_microstructure.c
+        spinodal_elasticity/rand_ZeroToOne.c
+        spinodal_elasticity/spinodal_elasticity.c
+        spinodal_elasticity/spinodal_elasticity.h
+        spinodal_elasticity/write_to_VTK.c
+        spinodal_elasticity/write_init_conc.c)
 
 add_executable(spinodal_ternary
         spinodal_ternary/array_allocate.c
@@ -59,6 +69,7 @@ add_executable(spinodal_ternary
 target_link_libraries(1d_diff_explicit m)
 target_link_libraries(spinodal m)
 target_link_libraries(spinodal_spect fftw3 m gsl gslcblas)
+target_link_libraries(spinodal_elasticity fftw3 m gsl gslcblas)
 target_link_libraries(spinodal_ternary fftw3 m gsl gslcblas)
 
 
