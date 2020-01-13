@@ -8,98 +8,60 @@ int main(int argc, char const *argv[]) {
   //declarations
   int Nx=128, Ny=128, Nz=0;
   double dx=1.0, dy=1.0, dz=0.0;
-  double *kx,*ky;
-  fftw_complex *c,*ctilde,*g,*gtilde;
+  double *kx,*ky,
+  *conc_print, *random_ZeroToOne_array;
+  fftw_complex *conc,*conc_tilde,*free_energy,*free_energy_tilde;
   fftw_plan p1,p2,p3;
 
-  double c0=0.4,
+  double conc0=0.5,
   dt=0.1,
   diffusivity=1.0,
   kappa=1.0,
   A=1.0,
   noise=0.02;
 
-  int nstep=1,
-  iprint=1,
+  int nstep=1000,
+  iprint=100,
   istep=0;
 
-  //FFTW allocations
-  c=(fftw_complex*)fftw_malloc(Nx*Ny*sizeof(fftw_complex));
-  ctilde=(fftw_complex*)fftw_malloc(Nx*Ny*sizeof(fftw_complex));
+  int i, j, ii;
+  int NxNy=Nx*Ny;
+  int iflag=1;
 
-  g=(fftw_complex*)fftw_malloc(Nx*Ny*sizeof(fftw_complex));
-  gtilde= (fftw_complex*)fftw_malloc(Nx*Ny*sizeof(fftw_complex));
+  //FFTW allocations
+  conc=(fftw_complex*)fftw_malloc(Nx * Ny * sizeof(fftw_complex));
+  conc_tilde=(fftw_complex*)fftw_malloc(Nx * Ny * sizeof(fftw_complex));
+
+  free_energy=(fftw_complex*)fftw_malloc(Nx * Ny * sizeof(fftw_complex));
+  free_energy_tilde= (fftw_complex*)fftw_malloc(Nx * Ny * sizeof(fftw_complex));
 
   kx=(double*)malloc(sizeof(double)*Nx);
   ky=(double*)malloc(sizeof(double)*Ny);
 
-  //creating plans
-  p1=fftw_plan_dft_2d(Nx,Ny,c,ctilde,FFTW_FORWARD,FFTW_ESTIMATE);
-  p2=fftw_plan_dft_2d(Nx,Ny,ctilde,c,FFTW_BACKWARD,FFTW_ESTIMATE);
-  p3=fftw_plan_dft_2d(Nx,Ny,g,gtilde,FFTW_FORWARD,FFTW_ESTIMATE);
+  conc_print=(double*)malloc(sizeof(double)*NxNy);
+  random_ZeroToOne_array=(double*)malloc(sizeof(double)*NxNy);
 
-  //allocate random array
-  float **random_ZeroToOne_array=0;
-  random_ZeroToOne_array=array_allocate(Nx, Ny, random_ZeroToOne_array);
+  //creating plans
+  p1=fftw_plan_dft_2d(Nx, Ny, conc, conc_tilde, FFTW_FORWARD, FFTW_ESTIMATE);
+  p2=fftw_plan_dft_2d(Nx, Ny, conc_tilde, conc, FFTW_BACKWARD, FFTW_ESTIMATE);
+  p3=fftw_plan_dft_2d(Nx, Ny, free_energy, free_energy_tilde, FFTW_FORWARD, FFTW_ESTIMATE);
 
   // get array of random numbers between 0 and 1 for setting initial microstructure
-  rand_ZeroToOne(Nx, Ny, random_ZeroToOne_array);
+  rand_ZeroToOne(Nx, Ny, 0, random_ZeroToOne_array);
 
-  //initial concentrarion
-  int ii=0;
-  int i, j;
-
-  // get duplicate array and initialise it
-  int NxNy=Nx*Ny;
-  double conc[NxNy];
-//  for (i = 0; i < NxNy; i++) {
-//    conc[i]=0.0;
-//  }
-
-  //add noise and prepare microstructure
-//  for (i=0; i < Nx; i++){
-//    for (j=0; j < Ny; j++){
-//      ii=i*Nx+j;
-//      c[ii] = c0 + noise*(0.5-random_ZeroToOne_array[i][j]);
-//      conc[ii] = creal(c[ii]);
-//    }
-//  }
-
-    for (i = 0; i < Nx; ++i) {
-        ii=i*Nx;
-        c[ii] = c0 + noise * (0.5 - random_ZeroToOne_array[i][0]);
-        conc[ii] = creal(c[ii]);
-    }
-
-    for (i = 0; i < Nx; i++) {
-        for (j = 0; j < Ny; ++j) {
-            ii=i*Nx+j;
-            c[ii]=c[i*Nx];
-            conc[ii] = creal(c[ii]);
-        }
-    }
+  //prepare microstructure
+  prep_microstructure(iflag, Nx, Ny, NxNy, conc, conc_print, conc0, noise, random_ZeroToOne_array);
 
   // write initial concentration to file
-  write_to_VTK(Nx, Ny, Nz, dx, dy, dz, istep, NxNy, conc );
+  write_to_VTK(Nx, Ny, Nz, dx, dy, dz, istep, NxNy, conc_print);
 
-    FILE *file;
-    char filename[30];
-    sprintf(filename, "./output/conc0FFTWbinary.txt");
-    file = fopen(filename,"w");
-    for (i = 0; i < Nx; i++) {
-        for (j = 0; j < Ny; ++j) {
-            fprintf(file, "%f", conc[i*Ny+j]);
-            fprintf(file,"\t");
-        }
-        fprintf(file,"\n");
-    }
-    fclose(file);
-
+  //write initial conc in TXT
+  write_init_conc(Nx, Ny, NxNy, conc_print);
 
   //print completion status
   printf("Timestep %d completed\n", istep );
 
-  //Boundary condition
+  //Periodic boundary conditions
   for(i=0; i<Nx; i++){
     if(i < Nx/2)
     kx[i]=2*M_PI*(double)(i)/(double)(Nx*dx);
@@ -117,24 +79,24 @@ int main(int argc, char const *argv[]) {
   //time loop
   for(istep=1; istep<=nstep; istep++){
 
-    // calculate g
+    // calculate free_energy
     for(i=0; i<Nx; i++){
       for(j=0; j<Ny; j++){
         ii=i*Nx+j;
-        g[ii]=2*A*creal(c[ii])*(1-creal(c[ii]))*(1-2*creal(c[ii]));
+          free_energy[ii]= 2 * A * creal(conc[ii]) * (1 - creal(conc[ii])) * (1 - 2 * creal(conc[ii]));
       }
     }
 
-    fftw_execute(p3);    //calculating gtilde
-    fftw_execute(p1);    //calculating ctilde
+    fftw_execute(p3);    //calculating free_energy_tilde
+    fftw_execute(p1);    //calculating conc_tilde
 
     // calculation in fourier space
     for(i=0; i<Nx; i++) {
       for(j=0; j<Ny; j++) {
         ii=i*Nx+j;
-        ctilde[ii]=(ctilde[ii]-((kx[i]*kx[i]+ky[j]*ky[j])*dt*diffusivity*gtilde[ii]))/
-        (1+2*kappa*diffusivity*(kx[i]*kx[i]+ky[j]*ky[j])*(kx[i]*kx[i]+ky[j]*ky[j])*dt)
-        + _Complex_I*0.0;
+          conc_tilde[ii]= (conc_tilde[ii] - ((kx[i] * kx[i] + ky[j] * ky[j]) * dt * diffusivity * free_energy_tilde[ii])) /
+                          (1+2*kappa*diffusivity*(kx[i]*kx[i]+ky[j]*ky[j])*(kx[i]*kx[i]+ky[j]*ky[j])*dt)
+                          + _Complex_I*0.0;
       }
     }
 
@@ -149,24 +111,23 @@ int main(int argc, char const *argv[]) {
       for (i=0; i < Nx; i++){
         for (j=0; j < Ny; j++){
           ii=i*Nx+j;
-          conc[ii] = creal(c[ii])/(double)(Nx*Ny);
+          conc_print[ii] = creal(conc[ii]) / (double)(Nx * Ny);
         }
       }
 
       // write initial concentration to file
-      write_to_VTK(Nx, Ny, Nz, dx, dy, dz, istep, NxNy, conc );
+      write_to_VTK(Nx, Ny, Nz, dx, dy, dz, istep, NxNy, conc_print );
 
       //print completion status
       printf("Timestep %d completed\n", istep );
     }
 
     //exchanging the values
-
     for(i=0; i<Nx; i++) {
       for(j=0; j<Ny; j++)
       {
         ii=i*Nx+j;
-        c[ii]=creal(c[ii])/(double)(Nx*Ny);
+        conc[ii]= creal(conc[ii]) / (double)(Nx * Ny);
       }
     }
   }
@@ -175,13 +136,14 @@ int main(int argc, char const *argv[]) {
   fftw_destroy_plan(p1);
   fftw_destroy_plan(p2);
   fftw_destroy_plan(p3);
-  fftw_free(c);
-  fftw_free(ctilde);
-  fftw_free(g);
-  fftw_free(gtilde);
+  fftw_free(conc);
+  fftw_free(conc_tilde);
+  fftw_free(free_energy);
+  fftw_free(free_energy_tilde);
   free(kx);
   free(ky);
-  array_deallocate(Ny, random_ZeroToOne_array);
+  free(conc_print);
+  free(random_ZeroToOne_array);
   fftw_cleanup();
 
   // end clock

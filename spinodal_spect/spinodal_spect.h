@@ -8,16 +8,13 @@
 #include <unistd.h>
 #include <gperftools/profiler.h>
 
+void prep_microstructure(int iflag, int Nx, int Ny, int NxNy, fftw_complex conc[NxNy], double conc_print[NxNy], double c0,
+                         double noise, double random_ZeroToOne_array[NxNy] ) ;
 
-float** array_allocate(int nx, int ny, float **array);
-
-void array_deallocate(int ny, float **array);
-
-void prep_microstructure(int nx, int ny, fftw_complex *conc, double c0,
-        double noise, float **random_ZeroToOne_array );
-
-float** rand_ZeroToOne(int nx, int ny, float **random_ZeroToOne_array);
+double *rand_ZeroToOne(int Nx, int Ny, int seed, double *random_ZeroToOne_array) ;
 
 void write_to_VTK( int nx, int ny, int nz,
         double dx, double dy, double dz,
         int iprint, int NxNy, double conc[NxNy] );
+
+void write_init_conc(int Nx, int Ny, int NxNy, double conc_print[NxNy]);
