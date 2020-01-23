@@ -8,19 +8,38 @@ int main(int argc, char const *argv[]) {
     //declarations
     int Nx=128, Ny=128, Nz=0;
     double dx=1.0, dy=1.0, dz=0.0;
-    double *kx,*ky,
-            *conc_print, *random_ZeroToOne_array;
+    double *kx,*ky, *conc_print, *random_ZeroToOne_array, *ed11, *ed22, *ed12;
     fftw_complex *conc,*conc_tilde,*free_energy,*free_energy_tilde;
     fftw_plan p1,p2,p3;
 
     double conc0=0.5,
-            dt=0.1,
+            dt=0.05,
             diffusivity=1.0,
             kappa=1.0,
             A=1.0,
             noise=0.02;
 
-    int nstep=1000,
+    // elastic constants:
+    double cm11, cm12, cm44,
+    cp11, cp12, cp44;
+
+    cm11 = 1400.0;
+    cm12 = 600.0;
+    cm44 = 400.0;
+    cp11 = 2.0*cm11;
+    cp12 = 2.0*cm12;
+    cp44 = 2.0*cm44;
+
+    //eigen strains
+    double ei0 = 0.01;
+
+    //applied strains
+    double ea[3];
+    ea[0]=0.0;
+    ea[1]=0.01;
+    ea[2]=0.0;
+
+    int nstep=5000,
             iprint=100,
             istep=0;
 
@@ -40,6 +59,10 @@ int main(int argc, char const *argv[]) {
 
     conc_print=(double*)malloc(sizeof(double)*NxNy);
     random_ZeroToOne_array=(double*)malloc(sizeof(double)*NxNy);
+
+    ed11=(double*)malloc(sizeof(double)*NxNy);
+    ed22=(double*)malloc(sizeof(double)*NxNy);
+    ed12=(double*)malloc(sizeof(double)*NxNy);
 
     //creating plans
     p1=fftw_plan_dft_2d(Nx, Ny, conc, conc_tilde, FFTW_FORWARD, FFTW_ESTIMATE);
