@@ -54,7 +54,7 @@ add_executable(spinodal_elasticity
         spinodal_elasticity/spinodal_elasticity.c
         spinodal_elasticity/spinodal_elasticity.h
         spinodal_elasticity/write_to_VTK.c
-        spinodal_elasticity/write_init_conc.c)
+        spinodal_elasticity/write_init_conc.c spinodal_elasticity/green_tensor.c)
 
 add_executable(spinodal_ternary
         spinodal_ternary/array_allocate.c
