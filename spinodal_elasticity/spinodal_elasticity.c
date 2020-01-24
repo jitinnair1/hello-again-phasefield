@@ -8,7 +8,8 @@ int main(int argc, char const *argv[]) {
     //declarations
     int Nx=128, Ny=128, Nz=0;
     double dx=1.0, dy=1.0, dz=0.0;
-    double *kx,*ky, *conc_print, *random_ZeroToOne_array, *ed11, *ed22, *ed12;
+    double *kx,*ky, *conc_print, *random_ZeroToOne_array;
+    double *tmatx, *ed11, *ed22, *ed12, *e11, *e22, *e12, *s11, *s22, *s12;
     fftw_complex *conc,*conc_tilde,*free_energy,*free_energy_tilde;
     fftw_plan p1,p2,p3;
 
@@ -54,15 +55,30 @@ int main(int argc, char const *argv[]) {
     free_energy=(fftw_complex*)fftw_malloc(Nx * Ny * sizeof(fftw_complex));
     free_energy_tilde= (fftw_complex*)fftw_malloc(Nx * Ny * sizeof(fftw_complex));
 
+    //FFT related all
     kx=(double*)malloc(sizeof(double)*Nx);
     ky=(double*)malloc(sizeof(double)*Ny);
 
+    //For RNG and write_to_VTK
     conc_print=(double*)malloc(sizeof(double)*NxNy);
     random_ZeroToOne_array=(double*)malloc(sizeof(double)*NxNy);
 
+    //eigen strains
     ed11=(double*)malloc(sizeof(double)*NxNy);
     ed22=(double*)malloc(sizeof(double)*NxNy);
     ed12=(double*)malloc(sizeof(double)*NxNy);
+
+    //initial stess and strain components
+    s11=(double*)malloc(sizeof(double)*NxNy);
+    s22=(double*)malloc(sizeof(double)*NxNy);
+    s12=(double*)malloc(sizeof(double)*NxNy);
+
+    e11=(double*)malloc(sizeof(double)*NxNy);
+    e22=(double*)malloc(sizeof(double)*NxNy);
+    e12=(double*)malloc(sizeof(double)*NxNy);
+
+    //green tensor array
+    tmatx = (double*) malloc(sizeof(double)*Nx*Ny*2*2*2*2*2*2);
 
     //creating plans
     p1=fftw_plan_dft_2d(Nx, Ny, conc, conc_tilde, FFTW_FORWARD, FFTW_ESTIMATE);
@@ -84,39 +100,16 @@ int main(int argc, char const *argv[]) {
     //print completion status
     printf("Timestep %d completed\n", istep );
 
-    //Periodic boundary conditions
-    for(i=0; i<Nx; i++){
-        if(i < Nx/2)
-            kx[i]=2*M_PI*(double)(i)/(double)(Nx*dx);
-        else
-            kx[i]=2*M_PI*(double)(i-Nx)/(double)(Nx*dx);
-    }
+    //prepare kx and ky
+    prep_fft(Nx, Ny, dx, dy, kx, ky);
 
-    for(j=0; j<Ny; j++){
-        if(j<Ny/2)
-            ky[j]=2*M_PI*(double)(j)/(double)(Ny*dy);
-        else
-            ky[j]=2*M_PI*(double)(j-Ny)/(double)(Ny*dy);
-    }
+    //green tensor
+    tmatx = green_tensor(Nx, Ny, kx, ky, cm11, cm12, cm44,
+                         cp11, cp12, cp44, tmatx);
 
     //time loop
     for(istep=1; istep<=nstep; istep++){
 
-        //green tensor
-        for(i=0; i<Nx; i++){
-            for(j=0; j<Ny; j++){
-                ii=i*Nx+j;
-                free_energy[ii]= 2 * A * creal(conc[ii]) * (1 - creal(conc[ii])) * (1 - 2 * creal(conc[ii]));
-            }
-        }
-
-        //calculate derivative of elastic_energy
-        for(i=0; i<Nx; i++){
-            for(j=0; j<Ny; j++){
-                ii=i*Nx+j;
-                free_energy[ii]= 2 * A * creal(conc[ii]) * (1 - creal(conc[ii])) * (1 - 2 * creal(conc[ii]));
-            }
-        }
 
         //calculate derivative of free_energy
         for(i=0; i<Nx; i++){
@@ -125,6 +118,12 @@ int main(int argc, char const *argv[]) {
                 free_energy[ii]= 2 * A * creal(conc[ii]) * (1 - creal(conc[ii])) * (1 - 2 * creal(conc[ii]));
             }
         }
+
+        //calculate derivative of elastic_energy
+        elasticity_derivative(Nx,Ny,tmatx,kx,ky,
+        s11,s22,s12,e11,e22,e12,
+        ed11,ed22,ed12,cm11,cm12,cm44,
+        cp11,cp12,cp44,ea,ei0,conc);
 
         fftw_execute(p3);    //calculating free_energy_tilde
         fftw_execute(p1);    //calculating conc_tilde
@@ -192,3 +191,4 @@ int main(int argc, char const *argv[]) {
 
     return 0;
 }
+

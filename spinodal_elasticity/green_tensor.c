@@ -5,8 +5,8 @@
 #include "spinodal_elasticity.h"
 
 
-double* green_tensor(int Nx, int Ny, double* kx, double* ky, double cm11, double cm12,
-        double cm44, double cp11, double cp12, double cp44, double* tmatx[Nx][Ny][2][2][2][2]){
+double *green_tensor(int Nx, int Ny, double *kx, double *ky, double cm11, double cm12,
+                     double cm44, double cp11, double cp12, double cp44, double *tmatx[Nx][Ny][2][2][2][2]){
 
     double c11, c12, c44, chi;
     double rr, d0;
@@ -69,5 +69,5 @@ double* green_tensor(int Nx, int Ny, double* kx, double* ky, double cm11, double
     }
 
 
-    return (double *) tmatx;
+    return tmatx;
 }
