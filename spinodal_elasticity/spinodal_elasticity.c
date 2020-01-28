@@ -14,7 +14,7 @@ int main(int argc, char const *argv[]) {
             *e11k, *e22k, *e12k, *s11k, *s22k, *s12k;
     fftw_complex *conc,*conc_tilde,*free_energy,*free_energy_tilde;
     fftw_plan p1,p2,p3,p4,p5,p6,p7,
-    p8,p9,p10,p11,p12,p13,p14;
+    p8,p9,p10,p11,p12,p13,p14,p15;
 
     double conc0=0.5,
             dt=0.05,
@@ -101,15 +101,15 @@ int main(int argc, char const *argv[]) {
     p6=fftw_plan_dft_2d(Nx, Ny, e12, e12k, FFTW_FORWARD, FFTW_ESTIMATE);
     p7=fftw_plan_dft_2d(Nx, Ny, s11, s11k, FFTW_FORWARD, FFTW_ESTIMATE);
     p8=fftw_plan_dft_2d(Nx, Ny, s12, s12k, FFTW_FORWARD, FFTW_ESTIMATE);
-    p8=fftw_plan_dft_2d(Nx, Ny, s22, s22k, FFTW_FORWARD, FFTW_ESTIMATE);
+    p9=fftw_plan_dft_2d(Nx, Ny, s22, s22k, FFTW_FORWARD, FFTW_ESTIMATE);
 
     //strains backward
-    p9=fftw_plan_dft_2d(Nx, Ny, e11k, e11, FFTW_BACKWARD, FFTW_ESTIMATE);
-    p10=fftw_plan_dft_2d(Nx, Ny, e22k, e22, FFTW_BACKWARD, FFTW_ESTIMATE);
-    p11=fftw_plan_dft_2d(Nx, Ny, e12k, e12, FFTW_BACKWARD, FFTW_ESTIMATE);
-    p12=fftw_plan_dft_2d(Nx, Ny, s11k, s11, FFTW_BACKWARD, FFTW_ESTIMATE);
-    p13=fftw_plan_dft_2d(Nx, Ny, s12k, s12, FFTW_BACKWARD, FFTW_ESTIMATE);
-    p14=fftw_plan_dft_2d(Nx, Ny, s22k, s22, FFTW_BACKWARD, FFTW_ESTIMATE);
+    p10=fftw_plan_dft_2d(Nx, Ny, e11k, e11, FFTW_BACKWARD, FFTW_ESTIMATE);
+    p11=fftw_plan_dft_2d(Nx, Ny, e22k, e22, FFTW_BACKWARD, FFTW_ESTIMATE);
+    p12=fftw_plan_dft_2d(Nx, Ny, e12k, e12, FFTW_BACKWARD, FFTW_ESTIMATE);
+    p13=fftw_plan_dft_2d(Nx, Ny, s11k, s11, FFTW_BACKWARD, FFTW_ESTIMATE);
+    p14=fftw_plan_dft_2d(Nx, Ny, s12k, s12, FFTW_BACKWARD, FFTW_ESTIMATE);
+    p15=fftw_plan_dft_2d(Nx, Ny, s22k, s22, FFTW_BACKWARD, FFTW_ESTIMATE);
 
     // get array of random numbers between 0 and 1 for setting initial microstructure
     rand_ZeroToOne(Nx, Ny, 0, random_ZeroToOne_array);
