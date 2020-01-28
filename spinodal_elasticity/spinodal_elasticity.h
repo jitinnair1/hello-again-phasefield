@@ -24,8 +24,7 @@ void prep_fft(int Nx, int Ny, double dx, double dy, double *kx, double *ky);
 double *green_tensor(int Nx, int Ny, double *kx, double *ky, double cm11, double cm12,
                      double cm44, double cp11, double cp12, double cp44, double* tmatx[Nx][Ny][2][2][2][2]);
 
-void elasticity_derivative(int nx, int ny, double *pDouble, double *pDouble1, double *pDouble2, double *pDouble3,
-                           double *pDouble4, double *pDouble5, double *pDouble6, double *pDouble7, double *pDouble8,
-                           double *pDouble9, double *pDouble10, double *pDouble11, double cm11, double cm12,
-                           double cm44, double cp11, double cp12, double cp44, double pDouble12[3], double ei0,
-                           fftw_complex *pDouble13);
+void elasticity_derivative(int Nx, int Ny, double tmatx, double kx, double ky,
+                           double s11, double s22, double s12,double e11, double e22, double e12,
+                           double ed11 ,double ed22 ,double ed12 ,double cm11 ,double cm12 ,double cm44 ,
+                           double cp11 ,double cp12 ,double cp44 ,double ea, double ei0, fftw_complex* conc) ;
