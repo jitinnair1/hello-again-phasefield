@@ -52,15 +52,15 @@ double *green_tensor(int Nx, int Ny, double *kx, double *ky, double cm11, double
             dvect[1]=ky[j];
 
             //green operator
-            for (int kk = 0; kk < 2; ++kk) {
-                for (int ll = 0; ll < 2; ++ll) {
-                    for (int ii = 0; ii < 2; ++ii) {
-                        for (int jj = 0; jj < 2; ++jj) {
-                            tmatx[i][j][kk][ll][ii][jj] = 0.25*(
-                                    gmatx[ll][ii]*dvect[jj]*dvect[kk]
-                                    +gmatx[kk][ii]*dvect[jj]*dvect[ll]
-                                    +gmatx[ll][jj]*dvect[ii]*dvect[kk]
-                                    +gmatx[kk][jj]*dvect[ii]*dvect[ll]);
+            for (int ii = 0; ii < 2; ++ii) {
+                for (int jj = 0; jj < 2; ++jj) {
+                    for (int kk = 0; kk < 2; ++kk) {
+                        for (int ll = 0; ll < 2; ++ll) {
+                            tmatx[i][j][ii][jj][kk][ll] = 0.25 * (
+                                    gmatx[jj][kk] * dvect[ll] * dvect[ii]
+                                    + gmatx[ii][kk] * dvect[ll] * dvect[jj]
+                                    + gmatx[jj][ll] * dvect[kk] * dvect[ii]
+                                    + gmatx[ii][ll] * dvect[kk] * dvect[jj]);
                         }
                     }
                 }

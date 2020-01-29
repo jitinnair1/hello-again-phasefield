@@ -48,30 +48,30 @@ int main(int argc, char const *argv[]) {
             istep=0;
 
     int i, j, ii;
-    int NxNy=Nx*Ny;
+    int num_points = Nx * Ny;
     int iflag=1;
 
     //FFTW allocations
-    conc=(fftw_complex*)fftw_malloc(Nx * Ny * sizeof(fftw_complex));
-    conc_tilde=(fftw_complex*)fftw_malloc(Nx * Ny * sizeof(fftw_complex));
+    conc=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
+    conc_tilde=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
 
-    free_energy=(fftw_complex*)fftw_malloc(Nx * Ny * sizeof(fftw_complex));
-    free_energy_tilde= (fftw_complex*)fftw_malloc(Nx * Ny * sizeof(fftw_complex));
+    free_energy=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
+    free_energy_tilde= (fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
 
     //initial stess and strain components
-    s11=(fftw_complex*)fftw_malloc(Nx * Ny * sizeof(fftw_complex));
-    s22=(fftw_complex*)fftw_malloc(Nx * Ny * sizeof(fftw_complex));
-    s12=(fftw_complex*)fftw_malloc(Nx * Ny * sizeof(fftw_complex));
-    s11k=(fftw_complex*)fftw_malloc(Nx * Ny * sizeof(fftw_complex));
-    s22k=(fftw_complex*)fftw_malloc(Nx * Ny * sizeof(fftw_complex));
-    s12k=(fftw_complex*)fftw_malloc(Nx * Ny * sizeof(fftw_complex));
+    s11=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
+    s22=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
+    s12=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
+    s11k=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
+    s22k=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
+    s12k=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
 
-    e11=(fftw_complex*)fftw_malloc(Nx * Ny * sizeof(fftw_complex));
-    e22=(fftw_complex*)fftw_malloc(Nx * Ny * sizeof(fftw_complex));
-    e12=(fftw_complex*)fftw_malloc(Nx * Ny * sizeof(fftw_complex));
-    e11k=(fftw_complex*)fftw_malloc(Nx * Ny * sizeof(fftw_complex));
-    e22k=(fftw_complex*)fftw_malloc(Nx * Ny * sizeof(fftw_complex));
-    e12k=((fftw_complex*)fftw_malloc(Nx * Ny * sizeof(fftw_complex));
+    e11=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
+    e22=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
+    e12=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
+    e11k=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
+    e22k=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
+    e12k=((fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
 
 
     //FFT related all
@@ -79,13 +79,13 @@ int main(int argc, char const *argv[]) {
     ky=(double*)malloc(sizeof(double)*Ny);
 
     //For RNG and write_to_VTK
-    conc_print=(double*)malloc(sizeof(double)*NxNy);
-    random_ZeroToOne_array=(double*)malloc(sizeof(double)*NxNy);
+    conc_print=(double*)malloc(sizeof(double) * num_points);
+    random_ZeroToOne_array=(double*)malloc(sizeof(double) * num_points);
 
     //eigen strains
-    ed11=(double*)malloc(sizeof(double)*NxNy);
-    ed22=(double*)malloc(sizeof(double)*NxNy);
-    ed12=(double*)malloc(sizeof(double)*NxNy);
+    ed11=(double*)malloc(sizeof(double) * num_points);
+    ed22=(double*)malloc(sizeof(double) * num_points);
+    ed12=(double*)malloc(sizeof(double) * num_points);
 
     //green tensor array
     tmatx = (double*) malloc(sizeof(double)*Nx*Ny*2*2*2*2*2*2);
@@ -94,6 +94,8 @@ int main(int argc, char const *argv[]) {
     p1=fftw_plan_dft_2d(Nx, Ny, conc, conc_tilde, FFTW_FORWARD, FFTW_ESTIMATE);
     p2=fftw_plan_dft_2d(Nx, Ny, conc_tilde, conc, FFTW_BACKWARD, FFTW_ESTIMATE);
     p3=fftw_plan_dft_2d(Nx, Ny, free_energy, free_energy_tilde, FFTW_FORWARD, FFTW_ESTIMATE);
+
+    //TODO: Check FFTW documentation. Should a 1D plan across total number of points be used here?
 
     //strains forward
     p4=fftw_plan_dft_2d(Nx, Ny, e11, e11k, FFTW_FORWARD, FFTW_ESTIMATE);
@@ -115,13 +117,13 @@ int main(int argc, char const *argv[]) {
     rand_ZeroToOne(Nx, Ny, 0, random_ZeroToOne_array);
 
     //prepare microstructure
-    prep_microstructure(iflag, Nx, Ny, NxNy, conc, conc_print, conc0, noise, random_ZeroToOne_array);
+    prep_microstructure(iflag, Nx, Ny, num_points, conc, conc_print, conc0, noise, random_ZeroToOne_array);
 
     // write initial concentration to file
-    write_to_VTK(Nx, Ny, Nz, dx, dy, dz, istep, NxNy, conc_print);
+    write_to_VTK(Nx, Ny, Nz, dx, dy, dz, istep, num_points, conc_print);
 
     //write initial conc in TXT
-    write_init_conc(Nx, Ny, NxNy, conc_print);
+    write_init_conc(Nx, Ny, num_points, conc_print);
 
     //print completion status
     printf("Timestep %d completed\n", istep );
@@ -180,7 +182,7 @@ int main(int argc, char const *argv[]) {
             }
 
             // write initial concentration to file
-            write_to_VTK(Nx, Ny, Nz, dx, dy, dz, istep, NxNy, conc_print );
+            write_to_VTK(Nx, Ny, Nz, dx, dy, dz, istep, num_points, conc_print );
 
             //print completion status
             printf("Timestep %d completed\n", istep );

@@ -37,21 +37,58 @@ void elasticity_derivative(int Nx, int Ny, double tmatx, double kx, double ky,
 
         //assemble ematx and smatx
         for (int i = 0; i < Nx; ++i) {
+            for (int j = 0; j < Ny; ++j) {
+                smatx[i][j][1][1] = s11k;
+                smatx[i][j][1][2] = s12k;
+                smatx[i][j][2][1] = s12k;
+                smatx[i][j][2][2] = s22k;
 
+                ematx[i][j][1][1] = e11k;
+                ematx[i][j][1][2] = e12k;
+                ematx[i][j][2][1] = e12k;
+                ematx[i][j][2][2] = e22k;
+
+                for (int ii = 0; ii < 2; ++ii) {
+                    for (int jj = 0; jj < 2; ++jj) {
+                        for (int kk = 0; kk < 2; ++kk) {
+                            for (int ll = 0; ll < 2; ++ll) {
+                                ematx[i][j][ii][jj] =
+                                        ematx[i][j][ii][jj] - tmatx[i][j][ii][jj][kk][ll] * smatx[i][j][ii][jj];
+                            }
+                        }
+                    }
+                }
+
+                //get updated values of strains in fourier space
+                e11k = ematx[i][j][1][1];
+                e22k = ematx[i][j][2][2];
+                e12k = ematx[i][j][1][2];
+            }
         }
 
-        //get updated values of strains in fourier space
-
         //take strains to real space
+        fftw_execute_dft(p10, e11k, e11);
+        fftw_execute_dft(p10, e12k, e12);
+        fftw_execute_dft(p10, e22k, e22);
 
         //calculate stress in real space
-
-        //check for convergence
-
+        for (int ii = 0; ii < NxNy; ++ii) {
+            s11[ii]=c11[ii]*(ea[0]+e11[ii]-ei11[ii]-ed11[ii])+c12[ii]*(ea[1]+e22[ii]-ei22[ii]-ed22[ii]);
+            s22[ii]=c12[ii]*(ea[1]+e22[ii]-ei22[ii]-ed22[ii])+c12[ii]*(ea[0]+e11[ii]-ei11[ii]-ed11[ii]);
+            s12[ii]=2.0*c22[ii];
+        }
 
     }
 
-    //return value of derivative
+
+
+
+    //check for convergence
+
+
+}
+
+//return value of derivative
 
 }
 
