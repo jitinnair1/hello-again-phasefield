@@ -11,10 +11,16 @@ void elasticity_derivative(int Nx, int Ny, double tmatx, double kx, double ky,
                            double cp11 ,double cp12 ,double cp44 ,double ea, double ei0, fftw_complex* conc,
                            fftw_plan p4, fftw_plan p10 ) {
 
-    int niter=10, NxNy=Nx*Ny;
-    double tolerance=0.001;
+    int niter=10,
+    num_points = Nx * Ny;
 
-    for (int ii = 0; ii < NxNy; ++ii) {
+    double tolerance=0.001;
+    double sum_norm=0.0,
+    old_norm=0.0,
+    conver=0.0,
+    normF;
+
+    for (int ii = 0; ii < num_points; ++ii) {
         ei11[ii] = ei0*conc[ii];
         ei22[ii] = ei0*conc[ii];
         ei33[ii] = ei0*conc[ii];
@@ -72,23 +78,39 @@ void elasticity_derivative(int Nx, int Ny, double tmatx, double kx, double ky,
         fftw_execute_dft(p10, e22k, e22);
 
         //calculate stress in real space
-        for (int ii = 0; ii < NxNy; ++ii) {
+        sum_norm = 0.0;
+        for (int ii = 0; ii < num_points; ++ii) {
             s11[ii]=c11[ii]*(ea[0]+e11[ii]-ei11[ii]-ed11[ii])+c12[ii]*(ea[1]+e22[ii]-ei22[ii]-ed22[ii]);
             s22[ii]=c12[ii]*(ea[1]+e22[ii]-ei22[ii]-ed22[ii])+c12[ii]*(ea[0]+e11[ii]-ei11[ii]-ed11[ii]);
-            s12[ii]=2.0*c22[ii];
+            s12[ii]=2.0*c22[ii]*(ea[2]+e12[ii]-ei12[ii]-ed12[ii]);
+            sum_stres[ii] = s11[ii]+s22[ii]+s12[ii];
+            sum_norm=sum_norm+(sum_stres[ii]*sum_stres[ii]);
         }
 
+        //get euclidean norm
+        normF = sqrt(sum_norm);
+
+        //check for convergence
+        if(k != 1)
+            conver = fabs((normF-old_norm)/old_norm);
+        if(conver <= tolerance)
+            break;
+        old_norm = normF;
     }
 
+    //return value of derivative
+    for (int ii = 0; ii < num_points; ++ii) {
+        et11[ii] =ea[0]+e11[ii]-ei11[ii]-ed11[ii];
+        et22[ii] =ea[1]+e22[ii]-ei22[ii]-ed22[ii];
+        et12[ii] =ea[2]+e12[ii]-ei12[ii]-ed12[ii];
 
 
-
-    //check for convergence
-
+        delsdc[ii] = 0.5*(et11[ii]*((cp12-cm12)*et22[ii]+(cp11-cm11)*et11[ii]-c12[ii]*ei0-c11[ii]*ei0)-ei0*(c12[ii]*et22[ii]
+                 +c11[ii]*et11[ii]) +  ((cp11-cm11)*et22[ii]+(cp12-cm12)*et11[ii]-c12[ii]*ei0-c11[ii]*ei0)*et22[ii]
+        -ei0*(c11[ii]*et22[ii]+c12[ii]*et11[ii]) + 2.0*(cp44-cm44)*et12[ii]*et12[ii]-4.0*ei0*c44[ii]*et12[ii]);
+    }
 
 }
 
-//return value of derivative
 
-}
 
