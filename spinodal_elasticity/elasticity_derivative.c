@@ -1,11 +1,9 @@
-//
 // Created by Jitin Nair on 24/01/20.
-//
 
 #include "spinodal_elasticity.h"
 
 
-void elasticity_derivative(int Nx, int Ny, int num_points, double sum_stress[num_points],
+void elasticity_derivative(int Nx, int Ny, int num_points,
         double tmatx, double smatx, double ematx,
         double s11[num_points], double s22[num_points], double s12[num_points],
         double e11[num_points], double e22[num_points], double e12[num_points],
@@ -25,6 +23,7 @@ void elasticity_derivative(int Nx, int Ny, int num_points, double sum_stress[num
     double sum_norm=0.0,
     old_norm=0.0,
     conver=0.0,
+    sum_stress=0.0,
     normF;
 
     for (int ii = 0; ii < num_points; ++ii) {
@@ -90,8 +89,8 @@ void elasticity_derivative(int Nx, int Ny, int num_points, double sum_stress[num
             s11[ii]=c11[ii]*(ea[0]+e11[ii]-ei11[ii]-ed11[ii])+c12[ii]*(ea[1]+e22[ii]-ei22[ii]-ed22[ii]);
             s22[ii]=c12[ii]*(ea[1]+e22[ii]-ei22[ii]-ed22[ii])+c12[ii]*(ea[0]+e11[ii]-ei11[ii]-ed11[ii]);
             s12[ii]=2.0*c44[ii]*(ea[2]+e12[ii]-ei12[ii]-ed12[ii]);
-            sum_stress[ii] = s11[ii]+s22[ii]+s12[ii];
-            sum_norm=sum_norm+(sum_stress[ii]*sum_stress[ii]);
+            sum_stress = creal(s11[ii]+s22[ii]+s12[ii]);
+            sum_norm=sum_norm+(sum_stress*sum_stress);
         }
 
         //get euclidean norm

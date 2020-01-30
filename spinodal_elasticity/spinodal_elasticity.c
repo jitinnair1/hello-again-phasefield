@@ -8,24 +8,26 @@ int main(int argc, char const *argv[]) {
     //declarations
     int Nx=128, Ny=128, Nz=0;
     double dx=1.0, dy=1.0, dz=0.0;
-    double *kx,*ky, *conc_print, *random_ZeroToOne_array;
-    double *tmatx, *ed11, *ed22, *ed12, *et11, *et22, *et12;
+    double *kx,*ky, *k2, *k4, *conc_print, *random_ZeroToOne_array,
+            *ei11, *ei22, *ei33, *ei12, *c11, *c12, *c44;
+    double *tmatx, *ematx, *smatx, *ed11, *ed22, *ed12, *et11, *et22, *et12;
     fftw_complex *e11, *e22, *e12, *s11, *s22, *s12,
             *e11k, *e22k, *e12k, *s11k, *s22k, *s12k;
-    fftw_complex *conc,*conc_tilde,*free_energy,*free_energy_tilde;
+    fftw_complex *conc, *conc_tilde, *free_energy, *free_energy_tilde, *delsdc, *delsdck;
     fftw_plan p1,p2,p3,p4,p5,p6,p7,
-    p8,p9,p10,p11,p12,p13,p14,p15;
+            p8,p9,p10,p11,p12,p13,p14,p15;
 
     double conc0=0.5,
             dt=0.05,
             mobility=1.0,
             kappa=1.0,
             A=1.0,
-            noise=0.02;
+            noise=0.02,
+            numer,
+            denom;
 
     // elastic constants:
-    double cm11, cm12, cm44,
-    cp11, cp12, cp44;
+    double cm11, cm12, cm44, cp11, cp12, cp44;
 
     cm11 = 1400.0;
     cm12 = 600.0;
@@ -58,6 +60,9 @@ int main(int argc, char const *argv[]) {
     free_energy=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
     free_energy_tilde= (fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
 
+    delsdc=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
+    delsdck=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
+
     //initial stess and strain components
     s11=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
     s22=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
@@ -71,12 +76,13 @@ int main(int argc, char const *argv[]) {
     e12=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
     e11k=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
     e22k=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
-    e12k=((fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
-
+    e12k=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
 
     //FFT related all
     kx=(double*)malloc(sizeof(double)*Nx);
     ky=(double*)malloc(sizeof(double)*Ny);
+    k2=(double*)malloc(sizeof(double)*num_points);
+    k4=(double*)malloc(sizeof(double)*num_points);
 
     //For RNG and write_to_VTK
     conc_print=(double*)malloc(sizeof(double) * num_points);
@@ -92,7 +98,18 @@ int main(int argc, char const *argv[]) {
     et12=(double*)malloc(sizeof(double) * num_points);
 
     //green tensor array
-    tmatx = (double*) malloc(sizeof(double)*Nx*Ny*2*2*2*2*2*2);
+    tmatx=(double*)malloc(sizeof(double)*Nx*Ny*2*2*2*2*2*2);
+
+    //elasticity related
+    ei11=(double*)malloc(sizeof(double)*num_points);
+    ei22=(double*)malloc(sizeof(double)*num_points);
+    ei33=(double*)malloc(sizeof(double)*num_points);
+    ei12=(double*)malloc(sizeof(double)*num_points);
+    c11=(double*)malloc(sizeof(double)*num_points);
+    c12=(double*)malloc(sizeof(double)*num_points);
+    c44=(double*)malloc(sizeof(double)*num_points);
+    ematx=(double*) malloc(sizeof(double)*Nx*Ny*2*2);
+    smatx=(double*) malloc(sizeof(double)*Nx*Ny*2*2);
 
     //creating plans
     p1=fftw_plan_dft_2d(Nx, Ny, conc, conc_tilde, FFTW_FORWARD, FFTW_ESTIMATE);
@@ -133,72 +150,68 @@ int main(int argc, char const *argv[]) {
     printf("Timestep %d completed\n", istep );
 
     //prepare kx and ky
-    prep_fft(Nx, Ny, dx, dy, kx, ky);
+    prep_fft(Nx, Ny, dx, dy, kx, ky, k2, k4);
 
     //green tensor
     tmatx = green_tensor(Nx, Ny, kx, ky, cm11, cm12, cm44,
                          cp11, cp12, cp44, tmatx);
 
     //time loop
-    for(istep=1; istep<=nstep; istep++){
-
+    for(istep=1; istep<=nstep; istep++) {
 
         //calculate derivative of free_energy
-        for(i=0; i<Nx; i++){
-            for(j=0; j<Ny; j++){
-                ii=i*Nx+j;
-                free_energy[ii]= 2 * A * creal(conc[ii]) * (1 - creal(conc[ii])) * (1 - 2 * creal(conc[ii]));
+        for (ii = 0; ii < num_points; ii++) {
+                free_energy[ii] = 2 * A * creal(conc[ii]) * (1 - creal(conc[ii])) * (1 - 2 * creal(conc[ii]));
             }
-        }
 
         //calculate derivative of elastic_energy
-        elasticity_derivative(Nx,Ny,tmatx,kx,ky,
-        s11,s22,s12,e11,e22,e12,
-        ed11,ed22,ed12,cm11,cm12,cm44,
-        cp11,cp12,cp44,ea,ei0,conc);
+        elasticity_derivative(Nx, Ny, num_points, tmatx, smatx, ematx,
+                s11, s22, s12, e11,  e22, e12, s11k, s22k, s12k,
+                e11k, e22k, e12k, ed11, ed22, ed12, et11, et22, et12,
+                ei11, ei22, ei33, ei12, cm11,  cm12,  cm44, c11, c12, c44,
+                cp11, cp12, cp44, ea, ei0, conc, delsdc, p4, p10);
 
         fftw_execute(p3);    //calculating free_energy_tilde
         fftw_execute(p1);    //calculating conc_tilde
         fftw_execute(p3);    //calculating elasticity_tilde
 
         // calculation in fourier space
-        for(ii=0; ii<num_points; ii++) {
-            numer[ii] = dt*mobility*k2[ii]*(free_energy_tilde[ii] + delsdck[ii]);
-            denom[ii] = 1.0 + dt*coefA*mobility*grad_coef*k4;
-            conc_tilde[ii] =(conc_tilde[ii] - numer[ii])/denom[ii];
+        for (ii = 0; ii < num_points; ii++) {
+            numer = dt * mobility * k2[ii] * (free_energy_tilde[ii] + delsdck[ii]);
+            denom = 1.0 + dt * A * mobility * kappa * k4[ii];
+            conc_tilde[ii] = (conc_tilde[ii] - numer) / denom;
         }
 
         //coming to real space
         fftw_execute(p2);
 
-
         //time interval for saving the data
-        if(istep%iprint==0)
-        {
+        if (istep % iprint == 0) {
             //write real part to conc[]
-            for (i=0; i < Nx; i++){
-                for (j=0; j < Ny; j++){
-                    ii=i*Nx+j;
-                    conc_print[ii] = creal(conc[ii]) / (double)(Nx * Ny);
+            for (i = 0; i < Nx; i++) {
+                for (j = 0; j < Ny; j++) {
+                    ii = i * Nx + j;
+                    conc_print[ii] = creal(conc[ii]) / (double) (Nx * Ny);
                 }
             }
 
             // write initial concentration to file
-            write_to_VTK(Nx, Ny, Nz, dx, dy, dz, istep, num_points, conc_print );
+            write_to_VTK(Nx, Ny, Nz, dx, dy, dz, istep, num_points, conc_print);
 
             //print completion status
-            printf("Timestep %d completed\n", istep );
-        }
-
-        //exchanging the values
-        for(i=0; i<Nx; i++) {
-            for(j=0; j<Ny; j++)
-            {
-                ii=i*Nx+j;
-                conc[ii]= creal(conc[ii]) / (double)(Nx * Ny);
-            }
+            printf("Timestep %d completed\n", istep);
         }
     }
+
+    //exchanging the values
+    for(i=0; i<Nx; i++) {
+        for(j=0; j<Ny; j++)
+        {
+            ii=i*Nx+j;
+            conc[ii]= creal(conc[ii]) / (double)(Nx * Ny);
+        }
+    }
+
 
     //FFTW Free, Destroy and Cleanup
     fftw_destroy_plan(p1);
@@ -218,7 +231,5 @@ int main(int argc, char const *argv[]) {
     clock_t toc = clock();
     printf("Elapsed: %f seconds\n", (double)(toc - tic) / CLOCKS_PER_SEC);
 
-
     return 0;
 }
-
