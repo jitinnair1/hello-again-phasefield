@@ -5,20 +5,27 @@
 #include "spinodal_elasticity.h"
 
 
-void elasticity_derivative(int Nx, int Ny, double tmatx, double kx, double ky,
-                           double s11, double s22, double s12,double e11, double e22, double e12,
-                           double ed11 ,double ed22 ,double ed12 ,double cm11 ,double cm12 ,double cm44 ,
-                           double cp11 ,double cp12 ,double cp44 ,double ea, double ei0, fftw_complex* conc,
-                           fftw_plan p4, fftw_plan p10 ) {
+void elasticity_derivative(int Nx, int Ny, int num_points, double sum_stress[num_points],
+        double tmatx, double smatx, double ematx,
+        double s11[num_points], double s22[num_points], double s12[num_points],
+        double e11[num_points], double e22[num_points], double e12[num_points],
+        double s11k[num_points], double s22k[num_points], double s12k[num_points],
+        double e11k[num_points], double e22k[num_points], double e12k[num_points],
+        double ed11[num_points], double ed22[num_points], double ed12[num_points],
+        double et11[num_points], double et22[num_points], double et12[num_points],
+        double ei11[num_points], double ei22[num_points], double ei33[num_points], double ei12[num_points],
+        double cm11, double cm12, double cm44,
+        double c11[num_points], double c12[num_points], double c44[num_points],
+        double cp11, double cp12, double cp44, double ea[], double ei0,
+        fftw_complex* conc[num_points], fftw_complex* delsdc[num_points], fftw_plan p4, fftw_plan p10) {
 
-    int niter=10,
-            num_points = Nx * Ny;
+    int niter=10;
 
     double tolerance=0.001;
     double sum_norm=0.0,
-            old_norm=0.0,
-            conver=0.0,
-            normF;
+    old_norm=0.0,
+    conver=0.0,
+    normF;
 
     for (int ii = 0; ii < num_points; ++ii) {
         ei11[ii] = ei0*conc[ii];
@@ -82,9 +89,9 @@ void elasticity_derivative(int Nx, int Ny, double tmatx, double kx, double ky,
         for (int ii = 0; ii < num_points; ++ii) {
             s11[ii]=c11[ii]*(ea[0]+e11[ii]-ei11[ii]-ed11[ii])+c12[ii]*(ea[1]+e22[ii]-ei22[ii]-ed22[ii]);
             s22[ii]=c12[ii]*(ea[1]+e22[ii]-ei22[ii]-ed22[ii])+c12[ii]*(ea[0]+e11[ii]-ei11[ii]-ed11[ii]);
-            s12[ii]=2.0*c22[ii]*(ea[2]+e12[ii]-ei12[ii]-ed12[ii]);
-            sum_stres[ii] = s11[ii]+s22[ii]+s12[ii];
-            sum_norm=sum_norm+(sum_stres[ii]*sum_stres[ii]);
+            s12[ii]=2.0*c44[ii]*(ea[2]+e12[ii]-ei12[ii]-ed12[ii]);
+            sum_stress[ii] = s11[ii]+s22[ii]+s12[ii];
+            sum_norm=sum_norm+(sum_stress[ii]*sum_stress[ii]);
         }
 
         //get euclidean norm

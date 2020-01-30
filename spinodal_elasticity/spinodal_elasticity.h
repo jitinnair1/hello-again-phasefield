@@ -24,7 +24,13 @@ void prep_fft(int Nx, int Ny, double dx, double dy, double *kx, double *ky);
 double *green_tensor(int Nx, int Ny, double *kx, double *ky, double cm11, double cm12,
                      double cm44, double cp11, double cp12, double cp44, double* tmatx[Nx][Ny][2][2][2][2]);
 
-void elasticity_derivative(int Nx, int Ny, double tmatx, double kx, double ky,
-                           double s11, double s22, double s12,double e11, double e22, double e12,
-                           double ed11 ,double ed22 ,double ed12 ,double cm11 ,double cm12 ,double cm44 ,
-                           double cp11 ,double cp12 ,double cp44 ,double ea, double ei0, fftw_complex* conc) ;
+void elasticity_derivative(int Nx, int Ny, int num_points, double tmatx,
+                           double s11[num_points], double s22[num_points], double s12[num_points],
+                           double e11[num_points], double e22[num_points], double e12[num_points],
+                           double ed11[num_points], double ed22[num_points], double ed12[num_points],
+                           double et11[num_points], double et22[num_points], double et12[num_points],
+                           double ei11[num_points], double ei22[num_points], double ei33[num_points], double ei12[num_points],
+                           double cm11, double cm12, double cm44,
+                           double c11[num_points], double c12[num_points], double c44[num_points],
+                           double cp11, double cp12, double cp44, double ea[], double ei0,
+                           fftw_complex* conc[num_points], fftw_complex* delsdc[num_points], fftw_plan p4, fftw_plan p10) ;

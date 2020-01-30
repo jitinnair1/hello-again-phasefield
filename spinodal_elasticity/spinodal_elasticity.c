@@ -9,7 +9,7 @@ int main(int argc, char const *argv[]) {
     int Nx=128, Ny=128, Nz=0;
     double dx=1.0, dy=1.0, dz=0.0;
     double *kx,*ky, *conc_print, *random_ZeroToOne_array;
-    double *tmatx, *ed11, *ed22, *ed12;
+    double *tmatx, *ed11, *ed22, *ed12, *et11, *et22, *et12;
     fftw_complex *e11, *e22, *e12, *s11, *s22, *s12,
             *e11k, *e22k, *e12k, *s11k, *s22k, *s12k;
     fftw_complex *conc,*conc_tilde,*free_energy,*free_energy_tilde;
@@ -86,6 +86,10 @@ int main(int argc, char const *argv[]) {
     ed11=(double*)malloc(sizeof(double) * num_points);
     ed22=(double*)malloc(sizeof(double) * num_points);
     ed12=(double*)malloc(sizeof(double) * num_points);
+
+    et11=(double*)malloc(sizeof(double) * num_points);
+    et22=(double*)malloc(sizeof(double) * num_points);
+    et12=(double*)malloc(sizeof(double) * num_points);
 
     //green tensor array
     tmatx = (double*) malloc(sizeof(double)*Nx*Ny*2*2*2*2*2*2);
