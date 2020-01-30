@@ -12,13 +12,13 @@ void elasticity_derivative(int Nx, int Ny, double tmatx, double kx, double ky,
                            fftw_plan p4, fftw_plan p10 ) {
 
     int niter=10,
-    num_points = Nx * Ny;
+            num_points = Nx * Ny;
 
     double tolerance=0.001;
     double sum_norm=0.0,
-    old_norm=0.0,
-    conver=0.0,
-    normF;
+            old_norm=0.0,
+            conver=0.0,
+            normF;
 
     for (int ii = 0; ii < num_points; ++ii) {
         ei11[ii] = ei0*conc[ii];
@@ -100,14 +100,16 @@ void elasticity_derivative(int Nx, int Ny, double tmatx, double kx, double ky,
 
     //return value of derivative
     for (int ii = 0; ii < num_points; ++ii) {
+
+        //strain energy components
         et11[ii] =ea[0]+e11[ii]-ei11[ii]-ed11[ii];
         et22[ii] =ea[1]+e22[ii]-ei22[ii]-ed22[ii];
         et12[ii] =ea[2]+e12[ii]-ei12[ii]-ed12[ii];
 
 
-        delsdc[ii] = 0.5*(et11[ii]*((cp12-cm12)*et22[ii]+(cp11-cm11)*et11[ii]-c12[ii]*ei0-c11[ii]*ei0)-ei0*(c12[ii]*et22[ii]
-                 +c11[ii]*et11[ii]) +  ((cp11-cm11)*et22[ii]+(cp12-cm12)*et11[ii]-c12[ii]*ei0-c11[ii]*ei0)*et22[ii]
-        -ei0*(c11[ii]*et22[ii]+c12[ii]*et11[ii]) + 2.0*(cp44-cm44)*et12[ii]*et12[ii]-4.0*ei0*c44[ii]*et12[ii]);
+        delsdc[ii] = 0.5*(et11[ii]*((cp12-cm12)*et22[ii]+(cp11-cm11)*et11[ii]-c12[ii]*ei0-c11[ii]*ei0)-ei0*(c12[ii]*et22[ii] +c11[ii]*et11[ii])
+                + ((cp11-cm11)*et22[ii]+(cp12-cm12)*et11[ii]-c12[ii]*ei0-c11[ii]*ei0)*et22[ii] - ei0*(c11[ii]*et22[ii]+c12[ii]*et11[ii])
+                + 2.0*(cp44-cm44)*et12[ii]*et12[ii]-4.0*ei0*c44[ii]*et12[ii]);
     }
 
 }

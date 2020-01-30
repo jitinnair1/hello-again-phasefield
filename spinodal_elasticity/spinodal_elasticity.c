@@ -18,7 +18,7 @@ int main(int argc, char const *argv[]) {
 
     double conc0=0.5,
             dt=0.05,
-            diffusivity=1.0,
+            mobility=1.0,
             kappa=1.0,
             A=1.0,
             noise=0.02;
@@ -155,15 +155,13 @@ int main(int argc, char const *argv[]) {
 
         fftw_execute(p3);    //calculating free_energy_tilde
         fftw_execute(p1);    //calculating conc_tilde
+        fftw_execute(p3);    //calculating elasticity_tilde
 
         // calculation in fourier space
-        for(i=0; i<Nx; i++) {
-            for(j=0; j<Ny; j++) {
-                ii=i*Nx+j;
-                conc_tilde[ii]= (conc_tilde[ii] - ((kx[i] * kx[i] + ky[j] * ky[j]) * dt * diffusivity * free_energy_tilde[ii])) /
-                                (1+2*kappa*diffusivity*(kx[i]*kx[i]+ky[j]*ky[j])*(kx[i]*kx[i]+ky[j]*ky[j])*dt)
-                                + _Complex_I*0.0;
-            }
+        for(ii=0; ii<num_points; ii++) {
+            numer[ii] = dt*mobility*k2[ii]*(free_energy_tilde[ii] + delsdck[ii]);
+            denom[ii] = 1.0 + dt*coefA*mobility*grad_coef*k4;
+            conc_tilde[ii] =(conc_tilde[ii] - numer[ii])/denom[ii];
         }
 
         //coming to real space
