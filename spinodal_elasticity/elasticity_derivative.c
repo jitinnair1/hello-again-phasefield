@@ -4,37 +4,37 @@
 
 
 void elasticity_derivative(int Nx, int Ny, int num_points,
-        double tmatx, double smatx, double ematx,
-        double s11[num_points], double s22[num_points], double s12[num_points],
-        double e11[num_points], double e22[num_points], double e12[num_points],
-        double s11k[num_points], double s22k[num_points], double s12k[num_points],
-        double e11k[num_points], double e22k[num_points], double e12k[num_points],
+        double *tmatx, double *smatx, double *ematx,
+        fftw_complex s11[num_points], fftw_complex s22[num_points], fftw_complex s12[num_points],
+        fftw_complex e11[num_points], fftw_complex e22[num_points], fftw_complex e12[num_points],
+        fftw_complex s11k[num_points], fftw_complex s22k[num_points], fftw_complex s12k[num_points],
+        fftw_complex e11k[num_points], fftw_complex e22k[num_points], fftw_complex e12k[num_points],
         double ed11[num_points], double ed22[num_points], double ed12[num_points],
         double et11[num_points], double et22[num_points], double et12[num_points],
         double ei11[num_points], double ei22[num_points], double ei33[num_points], double ei12[num_points],
         double cm11, double cm12, double cm44,
         double c11[num_points], double c12[num_points], double c44[num_points],
         double cp11, double cp12, double cp44, double ea[], double ei0,
-        fftw_complex* conc[num_points], fftw_complex* delsdc[num_points], fftw_plan p4, fftw_plan p10) {
+        fftw_complex* conc[num_points], fftw_complex* delsdc[num_points], fftw_plan p4, fftw_plan p5) {
 
-    int niter=10;
+    int niter=10, index;
 
     double tolerance=0.001;
-    double sum_norm=0.0,
+    double sum_norm,
     old_norm=0.0,
     conver=0.0,
-    sum_stress=0.0,
+    sum_stress,
     normF;
 
     for (int ii = 0; ii < num_points; ++ii) {
-        ei11[ii] = ei0*conc[ii];
-        ei22[ii] = ei0*conc[ii];
-        ei33[ii] = ei0*conc[ii];
-        ei12[ii] = 0.0*conc[ii];
+        ei11[ii] = ei0*creal(*conc[ii]);
+        ei22[ii] = ei0*creal(*conc[ii]);
+        ei33[ii] = ei0*creal(*conc[ii]);
+        ei12[ii] = 0.0*creal(*conc[ii]);
 
-        c11[ii] = conc[ii]*cp11 +(1.0-conc[ii])*cm11;
-        c12[ii] = conc[ii]*cp12 +(1.0-conc[ii])*cm12;
-        c44[ii] = conc[ii]*cp44 +(1.0-conc[ii])*cm44;
+        c11[ii] = creal(*conc[ii])*cp11 +(1.0-creal(*conc[ii]))*cm11;
+        c12[ii] = creal(*conc[ii])*cp12 +(1.0-creal(*conc[ii]))*cm12;
+        c44[ii] = creal(*conc[ii])*cp44 +(1.0-creal(*conc[ii]))*cm44;
     }
 
     for (int k = 0; k < niter; ++k) {
@@ -50,15 +50,16 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
         //assemble ematx and smatx
         for (int i = 0; i < Nx; ++i) {
             for (int j = 0; j < Ny; ++j) {
-                smatx[i][j][1][1] = s11k;
-                smatx[i][j][1][2] = s12k;
-                smatx[i][j][2][1] = s12k;
-                smatx[i][j][2][2] = s22k;
+                index=i*Nx + j;
+                smatx[i][j][1][1] = s11k[index];
+                smatx[i][j][1][2] = s12k[index];
+                smatx[i][j][2][1] = s12k[index];
+                smatx[i][j][2][2] = s22k[index];
 
-                ematx[i][j][1][1] = e11k;
-                ematx[i][j][1][2] = e12k;
-                ematx[i][j][2][1] = e12k;
-                ematx[i][j][2][2] = e22k;
+                ematx[i][j][1][1] = e11k[index];
+                ematx[i][j][1][2] = e12k[index];
+                ematx[i][j][2][1] = e12k[index];
+                ematx[i][j][2][2] = e22k[index];
 
                 for (int ii = 0; ii < 2; ++ii) {
                     for (int jj = 0; jj < 2; ++jj) {
@@ -72,16 +73,16 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
                 }
 
                 //get updated values of strains in fourier space
-                e11k = ematx[i][j][1][1];
-                e22k = ematx[i][j][2][2];
-                e12k = ematx[i][j][1][2];
+                e11k[index] = ematx[i][j][1][1];
+                e22k[index] = ematx[i][j][2][2];
+                e12k[index] = ematx[i][j][1][2];
             }
         }
 
         //take strains to real space
-        fftw_execute_dft(p10, e11k, e11);
-        fftw_execute_dft(p10, e12k, e12);
-        fftw_execute_dft(p10, e22k, e22);
+        fftw_execute_dft(p5, e11k, e11);
+        fftw_execute_dft(p5, e12k, e12);
+        fftw_execute_dft(p5, e22k, e22);
 
         //calculate stress in real space
         sum_norm = 0.0;

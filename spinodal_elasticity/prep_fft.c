@@ -5,6 +5,7 @@
 
 void prep_fft(int Nx, int Ny, double dx, double dy, double *kx, double *ky,
         double *k2, double *k4){
+
     //Periodic boundary conditions
     for(int i=0; i<Nx; i++){
         if(i < Nx/2)

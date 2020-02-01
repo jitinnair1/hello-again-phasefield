@@ -14,8 +14,7 @@ int main(int argc, char const *argv[]) {
     fftw_complex *e11, *e22, *e12, *s11, *s22, *s12,
             *e11k, *e22k, *e12k, *s11k, *s22k, *s12k;
     fftw_complex *conc, *conc_tilde, *free_energy, *free_energy_tilde, *delsdc, *delsdck;
-    fftw_plan p1,p2,p3,p4,p5,p6,p7,
-            p8,p9,p10,p11,p12,p13,p14,p15;
+    fftw_plan p1,p2,p3,p4,p5;
 
     double conc0=0.5,
             dt=0.05,
@@ -120,19 +119,9 @@ int main(int argc, char const *argv[]) {
 
     //strains forward
     p4=fftw_plan_dft_2d(Nx, Ny, e11, e11k, FFTW_FORWARD, FFTW_ESTIMATE);
-    p5=fftw_plan_dft_2d(Nx, Ny, e22, e22k, FFTW_FORWARD, FFTW_ESTIMATE);
-    p6=fftw_plan_dft_2d(Nx, Ny, e12, e12k, FFTW_FORWARD, FFTW_ESTIMATE);
-    p7=fftw_plan_dft_2d(Nx, Ny, s11, s11k, FFTW_FORWARD, FFTW_ESTIMATE);
-    p8=fftw_plan_dft_2d(Nx, Ny, s12, s12k, FFTW_FORWARD, FFTW_ESTIMATE);
-    p9=fftw_plan_dft_2d(Nx, Ny, s22, s22k, FFTW_FORWARD, FFTW_ESTIMATE);
 
     //strains backward
-    p10=fftw_plan_dft_2d(Nx, Ny, e11k, e11, FFTW_BACKWARD, FFTW_ESTIMATE);
-    p11=fftw_plan_dft_2d(Nx, Ny, e22k, e22, FFTW_BACKWARD, FFTW_ESTIMATE);
-    p12=fftw_plan_dft_2d(Nx, Ny, e12k, e12, FFTW_BACKWARD, FFTW_ESTIMATE);
-    p13=fftw_plan_dft_2d(Nx, Ny, s11k, s11, FFTW_BACKWARD, FFTW_ESTIMATE);
-    p14=fftw_plan_dft_2d(Nx, Ny, s12k, s12, FFTW_BACKWARD, FFTW_ESTIMATE);
-    p15=fftw_plan_dft_2d(Nx, Ny, s22k, s22, FFTW_BACKWARD, FFTW_ESTIMATE);
+    p5=fftw_plan_dft_2d(Nx, Ny, e11k, e11, FFTW_BACKWARD, FFTW_ESTIMATE);
 
     // get array of random numbers between 0 and 1 for setting initial microstructure
     rand_ZeroToOne(Nx, Ny, 0, random_ZeroToOne_array);
@@ -166,14 +155,14 @@ int main(int argc, char const *argv[]) {
 
         //calculate derivative of elastic_energy
         elasticity_derivative(Nx, Ny, num_points, tmatx, smatx, ematx,
-                s11, s22, s12, e11,  e22, e12, s11k, s22k, s12k,
-                e11k, e22k, e12k, ed11, ed22, ed12, et11, et22, et12,
-                ei11, ei22, ei33, ei12, cm11,  cm12,  cm44, c11, c12, c44,
-                cp11, cp12, cp44, ea, ei0, conc, delsdc, p4, p10);
+                              s11, s22, s12, e11, e22, e12, s11k, s22k, s12k,
+                              e11k, e22k, e12k, ed11, ed22, ed12, et11, et22, et12,
+                              ei11, ei22, ei33, ei12, cm11, cm12, cm44, c11, c12, c44,
+                              cp11, cp12, cp44, ea, ei0, conc, delsdc, p4, p5);
 
         fftw_execute(p3);    //calculating free_energy_tilde
-        fftw_execute(p1);    //calculating conc_tilde
         fftw_execute(p3);    //calculating elasticity_tilde
+        fftw_execute(p1);    //calculating conc_tilde
 
         // calculation in fourier space
         for (ii = 0; ii < num_points; ii++) {
