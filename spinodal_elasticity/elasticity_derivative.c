@@ -4,18 +4,18 @@
 
 
 void elasticity_derivative(int Nx, int Ny, int num_points,
-        double *tmatx, double *smatx, double *ematx,
-        fftw_complex s11[num_points], fftw_complex s22[num_points], fftw_complex s12[num_points],
-        fftw_complex e11[num_points], fftw_complex e22[num_points], fftw_complex e12[num_points],
-        fftw_complex s11k[num_points], fftw_complex s22k[num_points], fftw_complex s12k[num_points],
-        fftw_complex e11k[num_points], fftw_complex e22k[num_points], fftw_complex e12k[num_points],
-        double ed11[num_points], double ed22[num_points], double ed12[num_points],
-        double et11[num_points], double et22[num_points], double et12[num_points],
-        double ei11[num_points], double ei22[num_points], double ei33[num_points], double ei12[num_points],
-        double cm11, double cm12, double cm44,
-        double c11[num_points], double c12[num_points], double c44[num_points],
-        double cp11, double cp12, double cp44, double ea[], double ei0,
-        fftw_complex* conc[num_points], fftw_complex* delsdc[num_points], fftw_plan p4, fftw_plan p5) {
+                           double tmatx, double smatx, double ematx,
+                           fftw_complex s11[num_points], fftw_complex s22[num_points], fftw_complex s12[num_points],
+                           fftw_complex e11[num_points], fftw_complex e22[num_points], fftw_complex e12[num_points],
+                           fftw_complex s11k[num_points], fftw_complex s22k[num_points], fftw_complex s12k[num_points],
+                           fftw_complex e11k[num_points], fftw_complex e22k[num_points], fftw_complex e12k[num_points],
+                           double ed11[num_points], double ed22[num_points], double ed12[num_points],
+                           double et11[num_points], double et22[num_points], double et12[num_points],
+                           double ei11[num_points], double ei22[num_points], double ei33[num_points], double ei12[num_points],
+                           double cm11, double cm12, double cm44,
+                           double c11[num_points], double c12[num_points], double c44[num_points],
+                           double cp11, double cp12, double cp44, double ea[], double ei0,
+                           fftw_complex conc[num_points], fftw_complex delsdc[num_points], fftw_plan p4, fftw_plan p5)  {
 
     int niter=10, index;
 

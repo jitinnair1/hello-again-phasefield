@@ -142,7 +142,7 @@ int main(int argc, char const *argv[]) {
     prep_fft(Nx, Ny, dx, dy, kx, ky, k2, k4);
 
     //green tensor
-    tmatx = green_tensor(Nx, Ny, kx, ky, cm11, cm12, cm44,
+    green_tensor(Nx, Ny, kx, ky, cm11, cm12, cm44,
                          cp11, cp12, cp44, tmatx);
 
     //time loop
