@@ -10,7 +10,7 @@ int main(int argc, char const *argv[]) {
     double dx=1.0, dy=1.0, dz=0.0;
     double *kx,*ky, *k2, *k4, *conc_print, *random_ZeroToOne_array,
             *ei11, *ei22, *ei33, *ei12, *c11, *c12, *c44;
-    double *tmatx, *ematx, *smatx, *ed11, *ed22, *ed12, *et11, *et22, *et12;
+    double *ed11, *ed22, *ed12, *et11, *et22, *et12;
     fftw_complex *e11, *e22, *e12, *s11, *s22, *s12,
             *e11k, *e22k, *e12k, *s11k, *s22k, *s12k;
     fftw_complex *conc, *conc_tilde, *free_energy, *free_energy_tilde, *delsdc, *delsdck;
@@ -97,7 +97,7 @@ int main(int argc, char const *argv[]) {
     et12=(double*)malloc(sizeof(double) * num_points);
 
     //green tensor array
-    tmatx=(double*)malloc(sizeof(double)*Nx*Ny*2*2*2*2*2*2);
+    double (*tmatx)[Ny][2][2][2][2] = malloc(sizeof(double[Nx][Ny][2][2][2][2]));
 
     //elasticity related
     ei11=(double*)malloc(sizeof(double)*num_points);
@@ -107,8 +107,8 @@ int main(int argc, char const *argv[]) {
     c11=(double*)malloc(sizeof(double)*num_points);
     c12=(double*)malloc(sizeof(double)*num_points);
     c44=(double*)malloc(sizeof(double)*num_points);
-    ematx=(double*) malloc(sizeof(double)*Nx*Ny*2*2);
-    smatx=(double*) malloc(sizeof(double)*Nx*Ny*2*2);
+    double (*smatx)[Ny][2][2] = malloc(sizeof(double[Nx][Ny][2][2]));
+    double (*ematx)[Ny][2][2] = malloc(sizeof(double[Nx][Ny][2][2]));
 
     //creating plans
     p1=fftw_plan_dft_2d(Nx, Ny, conc, conc_tilde, FFTW_FORWARD, FFTW_ESTIMATE);
@@ -133,7 +133,7 @@ int main(int argc, char const *argv[]) {
     write_to_VTK(Nx, Ny, Nz, dx, dy, dz, istep, num_points, conc_print);
 
     //write initial conc in TXT
-    write_init_conc(Nx, Ny, num_points, conc_print);
+    //write_init_conc(Nx, Ny, num_points, conc_print);
 
     //print completion status
     printf("Timestep %d completed\n", istep );

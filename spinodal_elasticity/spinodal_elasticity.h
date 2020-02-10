@@ -14,8 +14,8 @@ void prep_microstructure(int iflag, int Nx, int Ny, int NxNy, fftw_complex conc[
 double *rand_ZeroToOne(int Nx, int Ny, int seed, double *random_ZeroToOne_array) ;
 
 void write_to_VTK( int nx, int ny, int nz,
-        double dx, double dy, double dz,
-        int iprint, int NxNy, double conc[NxNy] );
+                   double dx, double dy, double dz,
+                   int iprint, int NxNy, double conc[NxNy] );
 
 void write_init_conc(int Nx, int Ny, int NxNy, double conc_print[NxNy]);
 
@@ -23,10 +23,10 @@ void prep_fft(int Nx, int Ny, double dx, double dy, double *kx, double *ky,
               double *k2, double *k4);
 
 double *green_tensor(int Nx, int Ny, double *kx, double *ky, double cm11, double cm12,
-                     double cm44, double cp11, double cp12, double cp44, double* tmatx[Nx][Ny][2][2][2][2]);
+                     double cm44, double cp11, double cp12, double cp44, double (*tmatx)[Ny][2][2][2][2]);
 
 void elasticity_derivative(int Nx, int Ny, int num_points,
-                           double tmatx, double smatx, double ematx,
+                           double tmatx[][Ny][2][2][2][2], double smatx[][Ny][2][2], double ematx[][Ny][2][2],
                            fftw_complex s11[num_points], fftw_complex s22[num_points], fftw_complex s12[num_points],
                            fftw_complex e11[num_points], fftw_complex e22[num_points], fftw_complex e12[num_points],
                            fftw_complex s11k[num_points], fftw_complex s22k[num_points], fftw_complex s12k[num_points],
