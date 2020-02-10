@@ -3,11 +3,16 @@
 //
 #include "spinodal_elasticity.h"
 
-void write_init_conc(int Nx, int Ny, int NxNy, double conc_print[NxNy]){
+void write_init_conc(int Nx, int Ny, int NxNy, double conc_print[NxNy], char label[30]){
+
     FILE *file;
-    char filename[30];
-    sprintf(filename, "./output/conc0FFTWbinary.txt");
-    file = fopen(filename,"w");
+    char fileToOpen[strlen(label) + 5];
+
+    strcpy(fileToOpen, label);
+    strcat(fileToOpen, ".txt");
+
+    file = fopen(fileToOpen,"w");
+
     for (int i = 0; i < Nx; i++) {
         for (int j = 0; j < Ny; ++j) {
             fprintf(file, "%f", conc_print[i*Ny+j]);

@@ -4,7 +4,7 @@ void prep_microstructure(int iflag, int Nx, int Ny, int NxNy, fftw_complex conc[
                          double noise, double random_ZeroToOne_array[NxNy]) {
   int ii=0;
   int i, j,
-  radius=Nx/10,
+  radius=Nx/6,
   cx=Nx/2,
   cy=Ny/2;
   double dist;

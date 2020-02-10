@@ -116,6 +116,7 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
         delsdc[ii] = 0.5*(et11[ii]*((cp12-cm12)*et22[ii]+(cp11-cm11)*et11[ii]-c12[ii]*ei0-c11[ii]*ei0)-ei0*(c12[ii]*et22[ii] +c11[ii]*et11[ii])
                 + ((cp11-cm11)*et22[ii]+(cp12-cm12)*et11[ii]-c12[ii]*ei0-c11[ii]*ei0)*et22[ii] - ei0*(c11[ii]*et22[ii]+c12[ii]*et11[ii])
                 + 2.0*(cp44-cm44)*et12[ii]*et12[ii]-4.0*ei0*c44[ii]*et12[ii]);
+
     }
 
 }

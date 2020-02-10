@@ -17,7 +17,7 @@ int main(int argc, char const *argv[]) {
     fftw_plan p1,p2,p3,p4,p5;
 
     double conc0=0.5,
-            dt=0.05,
+            dt=0.001,
             mobility=1.0,
             kappa=1.0,
             A=1.0,
@@ -44,13 +44,13 @@ int main(int argc, char const *argv[]) {
     ea[1]=0.01;
     ea[2]=0.0;
 
-    int nstep=5000,
-            iprint=100,
+    int nstep=1,
+            iprint=1,
             istep=0;
 
     int i, j, ii;
     int num_points = Nx * Ny;
-    int iflag=1;
+    int iflag=2;
 
     //FFTW allocations
     conc=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
@@ -133,7 +133,7 @@ int main(int argc, char const *argv[]) {
     write_to_VTK(Nx, Ny, Nz, dx, dy, dz, istep, num_points, conc_print);
 
     //write initial conc in TXT
-    //write_init_conc(Nx, Ny, num_points, conc_print);
+    write_init_conc(Nx, Ny, num_points, conc_print, "Initial_Conc");
 
     //print completion status
     printf("Timestep %d completed\n", istep );
@@ -160,9 +160,9 @@ int main(int argc, char const *argv[]) {
                               ei11, ei22, ei33, ei12, cm11, cm12, cm44, c11, c12, c44,
                               cp11, cp12, cp44, ea, ei0, conc, delsdc, p4, p5);
 
-        fftw_execute(p3);    //calculating free_energy_tilde
-        fftw_execute(p3);    //calculating elasticity_tilde
-        fftw_execute(p1);    //calculating conc_tilde
+        fftw_execute_dft(p3, free_energy, free_energy_tilde);   //calculating free_energy_tilde
+        fftw_execute_dft(p3, delsdc, delsdck);    //calculating elasticity_tilde
+        fftw_execute_dft(p3, conc, conc_tilde);    //calculating conc_tilde
 
         // calculation in fourier space
         for (ii = 0; ii < num_points; ii++) {
@@ -180,7 +180,7 @@ int main(int argc, char const *argv[]) {
             for (i = 0; i < Nx; i++) {
                 for (j = 0; j < Ny; j++) {
                     ii = i * Nx + j;
-                    conc_print[ii] = creal(conc[ii]) / (double) (Nx * Ny);
+                    conc_print[ii] = creal(conc[ii]) / (double) (num_points);
                 }
             }
 
@@ -197,7 +197,7 @@ int main(int argc, char const *argv[]) {
         for(j=0; j<Ny; j++)
         {
             ii=i*Nx+j;
-            conc[ii]= creal(conc[ii]) / (double)(Nx * Ny);
+            conc[ii]= creal(conc[ii]) / (double)(num_points);
         }
     }
 
