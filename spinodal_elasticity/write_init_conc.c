@@ -11,7 +11,7 @@ void write_init_conc(int Nx, int Ny, int NxNy, double conc_print[NxNy], char lab
     strcpy(fileToOpen, label);
     strcat(fileToOpen, ".txt");
 
-    file = fopen(fileToOpen,"w");
+    file = fopen(fileToOpen,"wb");
 
     for (int i = 0; i < Nx; i++) {
         for (int j = 0; j < Ny; ++j) {

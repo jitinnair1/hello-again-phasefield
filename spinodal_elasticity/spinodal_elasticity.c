@@ -17,9 +17,9 @@ int main(int argc, char const *argv[]) {
     fftw_plan p1,p2,p3,p4,p5;
 
     double conc0=0.5,
-            dt=0.001,
+            dt=0.0001,
             mobility=1.0,
-            kappa=1.0,
+            kappa=500.0,
             A=1.0,
             noise=0.02,
             numer,
@@ -28,24 +28,24 @@ int main(int argc, char const *argv[]) {
     // elastic constants:
     double cm11, cm12, cm44, cp11, cp12, cp44;
 
-    cm11 = 1400.0;
-    cm12 = 600.0;
-    cm44 = 400.0;
+    cm11 = 0.0;
+    cm12 = 0.0;
+    cm44 = 0.0;
     cp11 = 2.0*cm11;
     cp12 = 2.0*cm12;
     cp44 = 2.0*cm44;
 
     //eigen strains
-    double ei0 = 0.01;
+    double ei0 = 0.00;
 
     //applied strains
     double ea[3];
     ea[0]=0.0;
-    ea[1]=0.01;
+    ea[1]=0.00;
     ea[2]=0.0;
 
-    int nstep=1,
-            iprint=1,
+    int nstep=100,
+            iprint=10,
             istep=0;
 
     int i, j, ii;
@@ -133,7 +133,7 @@ int main(int argc, char const *argv[]) {
     write_to_VTK(Nx, Ny, Nz, dx, dy, dz, istep, num_points, conc_print);
 
     //write initial conc in TXT
-    write_init_conc(Nx, Ny, num_points, conc_print, "Initial_Conc");
+    write_init_conc(Nx, Ny, num_points, conc_print, "init_conc)");
 
     //print completion status
     printf("Timestep %d completed\n", istep );

@@ -36,6 +36,8 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
         c44[ii] = creal(conc[ii])*cp44 +(1.0-creal(conc[ii]))*cm44;
     }
 
+         //printf("s11k value before: %f\n", creal(s11k[0]));
+
     for (int k = 0; k < niter; ++k) {
 
         //take stress and strains to fourier space
@@ -47,9 +49,17 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
         fftw_execute_dft(p4, s22, s22k);
 
         //assemble ematx and smatx
+//        for (int i = 0; i < Nx; ++i) {
+//            for (int j = 0; j < Ny; ++j) {
+//                index = i * Nx + j;
+//                printf("s11k value for %d %d: %f\n", i, j, creal(s11k[index]));
+//            }
+//        }
+
+        //assemble ematx and smatx
         for (int i = 0; i < Nx; ++i) {
             for (int j = 0; j < Ny; ++j) {
-                index=i*Nx + j;
+                index=i * Nx + j;
                 smatx[i][j][0][0] = s11k[index];
                 smatx[i][j][0][1] = s12k[index];
                 smatx[i][j][1][0] = s12k[index];
@@ -116,6 +126,10 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
         delsdc[ii] = 0.5*(et11[ii]*((cp12-cm12)*et22[ii]+(cp11-cm11)*et11[ii]-c12[ii]*ei0-c11[ii]*ei0)-ei0*(c12[ii]*et22[ii] +c11[ii]*et11[ii])
                 + ((cp11-cm11)*et22[ii]+(cp12-cm12)*et11[ii]-c12[ii]*ei0-c11[ii]*ei0)*et22[ii] - ei0*(c11[ii]*et22[ii]+c12[ii]*et11[ii])
                 + 2.0*(cp44-cm44)*et12[ii]*et12[ii]-4.0*ei0*c44[ii]*et12[ii]);
+
+        delsdc[ii]=creal(delsdc[ii]);
+
+        //printf("%f\n", creal(delsdc[ii]));
 
     }
 
