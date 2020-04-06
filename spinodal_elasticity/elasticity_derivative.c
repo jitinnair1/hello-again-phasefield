@@ -17,7 +17,8 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
                            double cp11, double cp12, double cp44, double ea[], double ei0,
                            fftw_complex conc[num_points], fftw_complex delsdc[num_points], fftw_plan p4, fftw_plan p5)  {
 
-    int niter=10, index;
+    int niter=10;
+    long index;
     double tolerance=0.001;
     double sum_norm,
     old_norm=0.0,
@@ -49,26 +50,18 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
         fftw_execute_dft(p4, s22, s22k);
 
         //assemble ematx and smatx
-//        for (int i = 0; i < Nx; ++i) {
-//            for (int j = 0; j < Ny; ++j) {
-//                index = i * Nx + j;
-//                printf("s11k value for %d %d: %f\n", i, j, creal(s11k[index]));
-//            }
-//        }
-
-        //assemble ematx and smatx
         for (int i = 0; i < Nx; ++i) {
             for (int j = 0; j < Ny; ++j) {
                 index=i * Nx + j;
-                smatx[i][j][0][0] = s11k[index];
-                smatx[i][j][0][1] = s12k[index];
-                smatx[i][j][1][0] = s12k[index];
-                smatx[i][j][1][1] = s22k[index];
+                smatx[i][j][0][0] = creal(s11k[index]);
+                smatx[i][j][0][1] = creal(s12k[index]);
+                smatx[i][j][1][0] = creal(s12k[index]);
+                smatx[i][j][1][1] = creal(s22k[index]);
 
-                ematx[i][j][0][0] = e11k[index];
-                ematx[i][j][0][1] = e12k[index];
-                ematx[i][j][1][0] = e12k[index];
-                ematx[i][j][1][1] = e22k[index];
+                ematx[i][j][0][0] = creal(e11k[index]);
+                ematx[i][j][0][1] = creal(e12k[index]);
+                ematx[i][j][1][0] = creal(e12k[index]);
+                ematx[i][j][1][1] = creal(e22k[index]);
 
                 for (int ii = 0; ii < 2; ++ii) {
                     for (int jj = 0; jj < 2; ++jj) {
@@ -107,7 +100,7 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
         normF = sqrt(sum_norm);
 
         //check for convergence
-        if(k != 1)
+        if(k != 0)
             conver = fabs((normF-old_norm)/old_norm);
         if(conver <= tolerance)
             break;
@@ -128,8 +121,6 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
                 + 2.0*(cp44-cm44)*et12[ii]*et12[ii]-4.0*ei0*c44[ii]*et12[ii]);
 
         delsdc[ii]=creal(delsdc[ii]);
-
-        //printf("%f\n", creal(delsdc[ii]));
 
     }
 
