@@ -64,6 +64,6 @@ double *green_tensor(int Nx, int Ny, double kx[], double ky[], double cm11, doub
             }
         }
     }
-    
+
     return tmatx;
 }

@@ -37,8 +37,6 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
         c44[ii] = creal(conc[ii])*cp44 +(1.0-creal(conc[ii]))*cm44;
     }
 
-         //printf("s11k value before: %f\n", creal(s11k[0]));
-
     for (int k = 0; k < niter; ++k) {
 
         //take stress and strains to fourier space
@@ -52,7 +50,7 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
         //assemble ematx and smatx
         for (int i = 0; i < Nx; ++i) {
             for (int j = 0; j < Ny; ++j) {
-                index=i * Nx + j;
+                index = i * Nx + j;
                 smatx[i][j][0][0] = creal(s11k[index]);
                 smatx[i][j][0][1] = creal(s12k[index]);
                 smatx[i][j][1][0] = creal(s12k[index]);
@@ -62,7 +60,11 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
                 ematx[i][j][0][1] = creal(e12k[index]);
                 ematx[i][j][1][0] = creal(e12k[index]);
                 ematx[i][j][1][1] = creal(e22k[index]);
+            }
+        }
 
+        for (int i = 0; i < Nx; ++i) {
+            for (int j = 0; j < Ny; ++j) {
                 for (int ii = 0; ii < 2; ++ii) {
                     for (int jj = 0; jj < 2; ++jj) {
                         for (int kk = 0; kk < 2; ++kk) {
@@ -73,7 +75,12 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
                         }
                     }
                 }
+            }
+        }
 
+        for (int i = 0; i < Nx; ++i) {
+            for (int j = 0; j < Ny; ++j) {
+                index = i * Nx + j;
                 //get updated values of strains in fourier space
                 e11k[index] = ematx[i][j][0][0];
                 e22k[index] = ematx[i][j][1][1];
@@ -89,15 +96,16 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
         //calculate stress in real space
         sum_norm = 0.0;
         for (int ii = 0; ii < num_points; ++ii) {
-            s11[ii]=c11[ii]*(ea[0]+e11[ii]-ei11[ii]-ed11[ii])+c12[ii]*(ea[1]+e22[ii]-ei22[ii]-ed22[ii]);
-            s22[ii]=c12[ii]*(ea[1]+e22[ii]-ei22[ii]-ed22[ii])+c12[ii]*(ea[0]+e11[ii]-ei11[ii]-ed11[ii]);
-            s12[ii]=2.0*c44[ii]*(ea[2]+e12[ii]-ei12[ii]-ed12[ii]);
+            s11[ii]=creal(c11[ii]*(ea[0]+e11[ii]-ei11[ii]-ed11[ii])+c12[ii]*(ea[1]+e22[ii]-ei22[ii]-ed22[ii]));
+            s22[ii]=creal(c12[ii]*(ea[1]+e22[ii]-ei22[ii]-ed22[ii])+c12[ii]*(ea[0]+e11[ii]-ei11[ii]-ed11[ii]));
+            s12[ii]=creal(2.0*c44[ii]*(ea[2]+e12[ii]-ei12[ii]-ed12[ii]));
             sum_stress = creal(s11[ii]+s22[ii]+s12[ii]);
             sum_norm=sum_norm+(sum_stress*sum_stress);
         }
 
         //get euclidean norm
         normF = sqrt(sum_norm);
+
 
         //check for convergence
         if(k != 0)

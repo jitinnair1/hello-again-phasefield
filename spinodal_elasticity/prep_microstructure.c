@@ -9,7 +9,7 @@ void prep_microstructure(int iflag, int Nx, int Ny, int NxNy, fftw_complex conc[
   cy=Ny/2;
   double dist;
 
-  // Initialise with random fluctuation about conc0
+  // two grain setup
   if(iflag==1){
       for (i=0; i < Nx; i++){
           for (j=0; j < Ny; j++){
@@ -23,7 +23,7 @@ void prep_microstructure(int iflag, int Nx, int Ny, int NxNy, fftw_complex conc[
       }
   }
 
-  // For running 2D code in 1D mode
+  // random orientation
   if(iflag==2){
       for (i=0; i < Nx; i++){
           for (j=0; j < Ny; j++){

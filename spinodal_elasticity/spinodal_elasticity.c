@@ -16,41 +16,55 @@ int main(int argc, char const *argv[]) {
     fftw_complex *conc, *conc_tilde, *free_energy, *free_energy_tilde, *delsdc, *delsdck;
     fftw_plan p1,p2,p3,p4,p5;
 
-    double conc0=0.5,
-            dt=0.0001,
+    //evolution constants
+    double conc0=0.45,
+            dt=0.01,
             mobility=1.0,
-            kappa=500.0,
+            kappa=1.0,
             A=1.0,
             noise=0.02,
             numer,
             denom;
 
-    // elastic constants:
+    //output save constants
+    int nstep=5,
+    iprint=1,
+    istep=0;
+
+    int i, j, ii;
+    int num_points = Nx * Ny;
+
+    //type of microstructure (iflag=1 is two grain setup for bechmarking)
+    int iflag=1;
+
+    //elastic constants
     double cm11, cm12, cm44, cp11, cp12, cp44;
 
-    cm11 = 0.0;
-    cm12 = 0.0;
-    cm44 = 0.0;
+    cm11 = 1400.0;
+    cm12 = 600.0;
+    cm44 = 400.0;
     cp11 = 2.0*cm11;
     cp12 = 2.0*cm12;
     cp44 = 2.0*cm44;
 
+    //effective elasticities using vegard's law
+    c11=(double*)malloc(sizeof(double)*num_points);
+    c12=(double*)malloc(sizeof(double)*num_points);
+    c44=(double*)malloc(sizeof(double)*num_points);
+
     //eigen strains
-    double ei0 = 0.00;
+    double ei0 = 0.01;
+    ei11=(double*)malloc(sizeof(double)*num_points);
+    ei22=(double*)malloc(sizeof(double)*num_points);
+    ei33=(double*)malloc(sizeof(double)*num_points);
+    ei12=(double*)malloc(sizeof(double)*num_points);
 
     //applied strains
     double ea[3];
-    ea[0]=0.0;
-    ea[1]=0.00;
+    ea[0]=0.01;
+    ea[1]=0.0;
     ea[2]=0.0;
 
-    int nstep=100,
-            iprint=10,
-            istep=0;
-
-    int i, j, ii;
-    int num_points = Nx * Ny;
-    int iflag=2;
 
     //FFTW allocations
     conc=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
@@ -77,7 +91,7 @@ int main(int argc, char const *argv[]) {
     e22k=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
     e12k=(fftw_complex*)fftw_malloc(num_points * sizeof(fftw_complex));
 
-    //FFT related all
+    //declare k-vectors for Fourier space
     kx=(double*)malloc(sizeof(double)*Nx);
     ky=(double*)malloc(sizeof(double)*Ny);
     k2=(double*)malloc(sizeof(double)*num_points);
@@ -87,11 +101,12 @@ int main(int argc, char const *argv[]) {
     conc_print=(double*)malloc(sizeof(double) * num_points);
     random_ZeroToOne_array=(double*)malloc(sizeof(double) * num_points);
 
-    //eigen strains
+    //lattice defects
     ed11=(double*)malloc(sizeof(double) * num_points);
     ed22=(double*)malloc(sizeof(double) * num_points);
     ed12=(double*)malloc(sizeof(double) * num_points);
 
+    //strain components
     et11=(double*)malloc(sizeof(double) * num_points);
     et22=(double*)malloc(sizeof(double) * num_points);
     et12=(double*)malloc(sizeof(double) * num_points);
@@ -99,15 +114,10 @@ int main(int argc, char const *argv[]) {
     //green tensor array
     double (*tmatx)[Ny][2][2][2][2] = malloc(sizeof(double[Nx][Ny][2][2][2][2]));
 
-    //elasticity related
-    ei11=(double*)malloc(sizeof(double)*num_points);
-    ei22=(double*)malloc(sizeof(double)*num_points);
-    ei33=(double*)malloc(sizeof(double)*num_points);
-    ei12=(double*)malloc(sizeof(double)*num_points);
-    c11=(double*)malloc(sizeof(double)*num_points);
-    c12=(double*)malloc(sizeof(double)*num_points);
-    c44=(double*)malloc(sizeof(double)*num_points);
+    //stress tensor
     double (*smatx)[Ny][2][2] = malloc(sizeof(double[Nx][Ny][2][2]));
+
+    //strain tensor
     double (*ematx)[Ny][2][2] = malloc(sizeof(double[Nx][Ny][2][2]));
 
     //creating plans
