@@ -3,7 +3,7 @@
 #include "spinodal_elasticity.h"
 
 double *green_tensor(int Nx, int Ny, double kx[], double ky[], double cm11, double cm12,
-                     double cm44, double cp11, double cp12, double cp44, double tmatx[][Ny][2][2][2][2]){
+                     double cm44, double cp11, double cp12, double cp44, double tmatx[Nx][Ny][2][2][2][2]){
 
     double c11, c12, c44, chi;
     double rr, d0;
@@ -13,7 +13,7 @@ double *green_tensor(int Nx, int Ny, double kx[], double ky[], double cm11, doub
 
     c11 = 0.5*(cm11+cp11);
     c12 = 0.5*(cm12+cp12);
-    c44 = 0.5*(cm44+cm44);
+    c44 = 0.5*(cm44+cp44);
     chi=(c11-c12-2.0*c44)/c44;
 
     //Get omeg_mat values
@@ -66,4 +66,5 @@ double *green_tensor(int Nx, int Ny, double kx[], double ky[], double cm11, doub
     }
 
     return tmatx;
+
 }
