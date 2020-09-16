@@ -17,7 +17,8 @@ void prep_microstructure(int iflag, int Nx, int Ny, int NxNy, fftw_complex conc[
               dist = sqrt((i-cx)*(i-cx) + (j-cy)*(j-cy));
               if (dist < radius){
                   conc[ii]=1.0;
-              }
+              } else
+                  conc[ii]=0.0;
               conc_print[ii] = creal(conc[ii]);
           }
       }
