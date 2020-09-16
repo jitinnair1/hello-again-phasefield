@@ -23,8 +23,8 @@ void write_init_conc(int Nx, int Ny, int NxNy, double conc_print[NxNy], char lab
 void prep_fft(int Nx, int Ny, double dx, double dy, double *kx, double *ky,
               double *k2, double *k4);
 
-double *green_tensor(int Nx, int Ny, double *kx, double *ky, double cm11, double cm12,
-                     double cm44, double cp11, double cp12, double cp44, double tmatx[][Ny][2][2][2][2]);
+double *green_tensor(int Nx, int Ny, double kx[], double ky[], double cm11, double cm12,
+                     double cm44, double cp11, double cp12, double cp44, double tmatx[Nx][Ny][2][2][2][2]);
 
 void elasticity_derivative(int Nx, int Ny, int num_points,
                            double tmatx[][Ny][2][2][2][2], double smatx[][Ny][2][2], double ematx[][Ny][2][2],
