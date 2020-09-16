@@ -1,6 +1,7 @@
 // Created by Jitin Nair on 24/01/20.
 
 #include "spinodal_elasticity.h"
+#include <gsl/gsl_linalg.h>
 
 
 void elasticity_derivative(int Nx, int Ny, int num_points,
@@ -19,12 +20,13 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
 
     int niter=10;
     long index;
-    double tolerance=0.001;
-    double sum_norm,
-    old_norm=0.0,
-    conver=0.0,
-    sum_stress,
-    normF;
+    double tolerance=0.1;
+    double old_norm=0.0,
+    normF=0.0,
+    conver=0.0;
+
+    double *sum_stress;
+    sum_stress=(double*)malloc(sizeof(double)*num_points);
 
     for (int ii = 0; ii < num_points; ++ii) {
         ei11[ii] = ei0*creal(conc[ii]);
@@ -47,6 +49,9 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
         fftw_execute_dft(p4, s12, s12k);
         fftw_execute_dft(p4, s22, s22k);
 
+//        printf("%lf\n", smatx[100][100][0][0]);
+//        printf("%lf\n", creal(s11k[25700]));
+
         //assemble ematx and smatx
         for (int i = 0; i < Nx; ++i) {
             for (int j = 0; j < Ny; ++j) {
@@ -63,6 +68,7 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
             }
         }
 
+
         for (int i = 0; i < Nx; ++i) {
             for (int j = 0; j < Ny; ++j) {
                 for (int ii = 0; ii < 2; ++ii) {
@@ -70,7 +76,8 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
                         for (int kk = 0; kk < 2; ++kk) {
                             for (int ll = 0; ll < 2; ++ll) {
                                 ematx[i][j][ii][jj] =
-                                        ematx[i][j][ii][jj] - tmatx[i][j][ii][jj][kk][ll] * smatx[i][j][ii][jj];
+                                        ematx[i][j][ii][jj] - tmatx[i][j][ii][jj][kk][ll] * smatx[i][j][kk][ll];
+
                             }
                         }
                     }
@@ -94,18 +101,22 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
         fftw_execute_dft(p5, e22k, e22);
 
         //calculate stress in real space
-        sum_norm = 0.0;
         for (int ii = 0; ii < num_points; ++ii) {
-            s11[ii]=creal(c11[ii]*(ea[0]+e11[ii]-ei11[ii]-ed11[ii])+c12[ii]*(ea[1]+e22[ii]-ei22[ii]-ed22[ii]));
-            s22[ii]=creal(c12[ii]*(ea[1]+e22[ii]-ei22[ii]-ed22[ii])+c12[ii]*(ea[0]+e11[ii]-ei11[ii]-ed11[ii]));
-            s12[ii]=creal(2.0*c44[ii]*(ea[2]+e12[ii]-ei12[ii]-ed12[ii]));
-            sum_stress = creal(s11[ii]+s22[ii]+s12[ii]);
-            sum_norm=sum_norm+(sum_stress*sum_stress);
+            s11[ii]=c11[ii]*(ea[0]+e11[ii]-ei11[ii]-ed11[ii])+c12[ii]*(ea[1]+e22[ii]-ei22[ii]-ed22[ii]);
+            s22[ii]=c11[ii]*(ea[1]+e22[ii]-ei22[ii]-ed22[ii])+c12[ii]*(ea[0]+e11[ii]-ei11[ii]-ed11[ii]);
+            s12[ii]=2.0*c44[ii]*(ea[2]+e12[ii]-ei12[ii]-ed12[ii]);
+            sum_stress[ii] = creal(s11[ii]+s22[ii]+s12[ii]);
         }
 
-        //get euclidean norm
-        normF = sqrt(sum_norm);
-
+        //get 2-norm or max(svd(sum_stress))
+        gsl_matrix_view m = gsl_matrix_view_array (sum_stress, Nx, Ny);
+        gsl_matrix *V;
+        gsl_vector *S, *work;
+        V = gsl_matrix_calloc(Nx, Ny);
+        S = gsl_vector_calloc(Nx);
+        work = gsl_vector_calloc(Nx);
+        gsl_linalg_SV_decomp(&m.matrix, V, S, work);
+        normF=gsl_matrix_max(&m.matrix);
 
         //check for convergence
         if(k != 0)
