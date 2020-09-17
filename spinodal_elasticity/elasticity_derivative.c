@@ -31,7 +31,6 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
     for (int ii = 0; ii < num_points; ++ii) {
         ei11[ii] = ei0*creal(conc[ii]);
         ei22[ii] = ei0*creal(conc[ii]);
-        ei33[ii] = ei0*creal(conc[ii]);
         ei12[ii] = 0.0*creal(conc[ii]);
 
         c11[ii] = creal(conc[ii])*cp11 +(1.0-creal(conc[ii]))*cm11;
@@ -48,9 +47,6 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
         fftw_execute_dft(p4, s11, s11k);
         fftw_execute_dft(p4, s12, s12k);
         fftw_execute_dft(p4, s22, s22k);
-
-//        printf("%lf\n", smatx[100][100][0][0]);
-//        printf("%lf\n", creal(s11k[25700]));
 
         //assemble ematx and smatx
         for (int i = 0; i < Nx; ++i) {
@@ -100,23 +96,45 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
         fftw_execute_dft(p5, e12k, e12);
         fftw_execute_dft(p5, e22k, e22);
 
+        //normalize FFTW values
+        for (int i = 0; i < Nx; ++i) {
+            for (int j = 0; j < Ny; ++j) {
+                index = i * Nx + j;
+                //get updated values of strains in fourier space
+                e11[index] = e11[index]/ (double) num_points;
+                e22[index] = e22[index]/ (double) num_points;
+                e12[index] = e12[index]/ (double) num_points;
+            }
+        }
+
+
         //calculate stress in real space
         for (int ii = 0; ii < num_points; ++ii) {
             s11[ii]=c11[ii]*(ea[0]+e11[ii]-ei11[ii]-ed11[ii])+c12[ii]*(ea[1]+e22[ii]-ei22[ii]-ed22[ii]);
             s22[ii]=c11[ii]*(ea[1]+e22[ii]-ei22[ii]-ed22[ii])+c12[ii]*(ea[0]+e11[ii]-ei11[ii]-ed11[ii]);
-            s12[ii]=2.0*c44[ii]*(ea[2]+e12[ii]-ei12[ii]-ed12[ii]);
+            s12[ii] =2.0*c44[ii]*(ea[2]+e12[ii]-ei12[ii]-ed12[ii]);
             sum_stress[ii] = creal(s11[ii]+s22[ii]+s12[ii]);
         }
 
         //get 2-norm or max(svd(sum_stress))
-        gsl_matrix_view m = gsl_matrix_view_array (sum_stress, Nx, Ny);
-        gsl_matrix *V;
-        gsl_vector *S, *work;
+        gsl_matrix *V,*A;
+        A = gsl_matrix_calloc(Nx, Ny);
+        for (int i = 0; i < Nx; ++i) {
+            for (int j = 0; j < Ny; ++j) {
+                index = i * Nx + j;
+                //get updated values of strains in fourier space
+                gsl_matrix_set(A, i, j, sum_stress[index]);
+            }
+        }
+
         V = gsl_matrix_calloc(Nx, Ny);
+
+        gsl_vector *S, *work;
         S = gsl_vector_calloc(Nx);
         work = gsl_vector_calloc(Nx);
-        gsl_linalg_SV_decomp(&m.matrix, V, S, work);
-        normF=gsl_matrix_max(&m.matrix);
+
+        gsl_linalg_SV_decomp(A, V, S, work);
+        normF=gsl_vector_max(S);
 
         //check for convergence
         if(k != 0)
