@@ -18,7 +18,7 @@ int main(int argc, char const *argv[]) {
 
     //evolution constants
     double conc0=0.40,
-            dt=0.01,
+            dt=0.05,
             mobility=1.0,
             kappa=0.5,
             A=1.0,
@@ -27,8 +27,8 @@ int main(int argc, char const *argv[]) {
             denom;
 
     //output save constants
-    int nstep=800,
-    iprint=100,
+    int nstep=100,
+    iprint=20,
     istep=0;
 
     int i, j, ii;
@@ -168,7 +168,7 @@ int main(int argc, char const *argv[]) {
                               s11, s22, s12, e11, e22, e12, s11k, s22k, s12k,
                               e11k, e22k, e12k, ed11, ed22, ed12, et11, et22, et12,
                               ei11, ei22, ei33, ei12, cm11, cm12, cm44, c11, c12, c44,
-                              cp11, cp12, cp44, ea, ei0, conc, delsdc, p4, p5);
+                              cp11, cp12, cp44, ea, ei0, conc, delsdc, p4, p5, istep);
 
 
         fftw_execute_dft(p3, free_energy, free_energy_tilde);   //calculating free_energy_tilde

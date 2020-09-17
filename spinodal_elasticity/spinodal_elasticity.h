@@ -38,4 +38,5 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
                            double cm11, double cm12, double cm44,
                            double c11[num_points], double c12[num_points], double c44[num_points],
                            double cp11, double cp12, double cp44, double ea[], double ei0,
-                           fftw_complex conc[num_points], fftw_complex delsdc[num_points], fftw_plan p4, fftw_plan p5) ;
+                           fftw_complex conc[num_points], fftw_complex delsdc[num_points], fftw_plan p4, fftw_plan p5,
+                           int istep);
