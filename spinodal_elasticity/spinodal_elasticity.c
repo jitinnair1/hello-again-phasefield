@@ -27,8 +27,8 @@ int main(int argc, char const *argv[]) {
             denom;
 
     //output save constants
-    int nstep=5,
-    iprint=1,
+    int nstep=800,
+    iprint=100,
     istep=0;
 
     int i, j, ii;
@@ -212,17 +212,16 @@ int main(int argc, char const *argv[]) {
             //print completion status
             printf("Timestep %d completed\n", istep);
         }
-    }
 
-    //exchanging the values
-    for(i=0; i<Nx; i++) {
-        for(j=0; j<Ny; j++)
-        {
-            ii=i*Nx+j;
-            conc[ii]= creal(conc[ii]) / (double)(num_points);
+        //exchanging the values
+        for(i=0; i<Nx; i++) {
+            for(j=0; j<Ny; j++)
+            {
+                ii=i*Nx+j;
+                conc[ii]= creal(conc[ii]) / (double)(num_points);
+            }
         }
     }
-
 
     //FFTW Free, Destroy and Cleanup
     fftw_destroy_plan(p1);
