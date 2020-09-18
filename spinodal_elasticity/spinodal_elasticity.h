@@ -40,3 +40,7 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
                            double cp11, double cp12, double cp44, double ea[], double ei0,
                            fftw_complex conc[num_points], fftw_complex delsdc[num_points], fftw_plan p4, fftw_plan p5,
                            int istep);
+
+void write_var_to_VTK( int nx, int ny, int nz,
+                       double dx, double dy, double dz,
+                       int iprint, int NxNy, double conc[NxNy], char label[30]);

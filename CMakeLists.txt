@@ -56,7 +56,11 @@ add_executable(spinodal_elasticity
         spinodal_elasticity/spinodal_elasticity.c
         spinodal_elasticity/spinodal_elasticity.h
         spinodal_elasticity/write_to_VTK.c
-        spinodal_elasticity/write_init_conc.c spinodal_elasticity/green_tensor.c spinodal_elasticity/prep_fft.c spinodal_elasticity/elasticity_derivative.c)
+        spinodal_elasticity/write_var_to_VTK.c
+        spinodal_elasticity/write_init_conc.c
+        spinodal_elasticity/green_tensor.c
+        spinodal_elasticity/prep_fft.c
+        spinodal_elasticity/elasticity_derivative.c)
 
 add_executable(spinodal_ternary
         spinodal_ternary/array_allocate.c
