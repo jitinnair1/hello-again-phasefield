@@ -54,7 +54,7 @@ void write_var_to_VTK( int nx, int ny, int nz,
 
   // grid point values
   fprintf(fp,"POINT_DATA %6d\n", num_points);
-  fprintf(fp,"SCALARS CONC  float  1\n");
+  fprintf(fp,"SCALARS %s float  1\n", label);
   fprintf(fp,"LOOKUP_TABLE default\n");
   int i, j, ii;
   for (i = 0; i < Nx; i++) {

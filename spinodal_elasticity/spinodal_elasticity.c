@@ -39,7 +39,7 @@ int main(int argc, char const *argv[]) {
 
     //elastic constants
     double cm11, cm12, cm44, cp11, cp12, cp44;
-    double mu=2.0; //C_particle to C_matrix ratio
+    double mu=1.0; //C_particle to C_matrix ratio
     cm11 = 1400.0;
     cm12 = 600.0;
     cm44 = 400.0;
