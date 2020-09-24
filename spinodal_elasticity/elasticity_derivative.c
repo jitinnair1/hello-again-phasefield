@@ -16,7 +16,8 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
                            double cm11, double cm12, double cm44,
                            double c11[num_points], double c12[num_points], double c44[num_points],
                            double cp11, double cp12, double cp44, double ea[], double ei0,
-                           fftw_complex conc[num_points], fftw_complex delsdc[num_points], fftw_plan p4, fftw_plan p5)  {
+                           fftw_complex conc[num_points], fftw_complex delsdc[num_points], fftw_plan p4, fftw_plan p5,
+                           int istep)  {
 
     int niter=10;
     long index;
@@ -27,6 +28,11 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
 
     double *sum_stress;
     sum_stress=(double*)malloc(sizeof(double)*num_points);
+
+    double *s11_print, *s12_print, *s22_print;
+    s11_print=(double*)malloc(sizeof(double) * num_points);
+    s12_print=(double*)malloc(sizeof(double) * num_points);
+    s22_print=(double*)malloc(sizeof(double) * num_points);
 
     for (int ii = 0; ii < num_points; ++ii) {
         ei11[ii] = ei0*creal(conc[ii]);
@@ -142,6 +148,20 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
         if(conver <= tolerance)
             break;
         old_norm = normF;
+    }
+
+    //write stress values to file
+    int iprint=20;
+    if (istep % iprint == 0){
+        for (int ii = 0; ii < num_points; ++ii) {
+            s11_print[ii]=creal(s11[ii]);
+            s12_print[ii]=creal(s12[ii]);
+            s22_print[ii]=creal(s22[ii]);
+        }
+
+        write_var_to_VTK(Nx, Ny, 0, 1.0, 1.0, 0.0, istep, num_points, s11_print, "s11");
+        write_var_to_VTK(Nx, Ny, 0, 1.0, 1.0, 0.0, istep, num_points, s12_print, "s12");
+        write_var_to_VTK(Nx, Ny, 0, 1.0, 1.0, 0.0, istep, num_points, s22_print, "s22");
     }
 
     //return value of derivative
