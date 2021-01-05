@@ -159,9 +159,9 @@ void elasticity_derivative(int Nx, int Ny, int num_points,
             s22_print[ii]=creal(s22[ii]);
         }
 
-        write_var_to_VTK(Nx, Ny, 0, 1.0, 1.0, 0.0, istep, num_points, s11_print, "s11");
-        write_var_to_VTK(Nx, Ny, 0, 1.0, 1.0, 0.0, istep, num_points, s12_print, "s12");
-        write_var_to_VTK(Nx, Ny, 0, 1.0, 1.0, 0.0, istep, num_points, s22_print, "s22");
+//        write_var_to_VTK(Nx, Ny, 0, 1.0, 1.0, 0.0, istep, num_points, s11_print, "s11");
+//        write_var_to_VTK(Nx, Ny, 0, 1.0, 1.0, 0.0, istep, num_points, s12_print, "s12");
+//        write_var_to_VTK(Nx, Ny, 0, 1.0, 1.0, 0.0, istep, num_points, s22_print, "s22");
     }
 
     //return value of derivative
