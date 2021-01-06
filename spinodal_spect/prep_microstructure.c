@@ -1,7 +1,7 @@
 #include "spinodal_spect.h"
 
 void prep_microstructure(int iflag, int Nx, int Ny, int NxNy, fftw_complex conc[NxNy], double conc_print[NxNy], double c0,
-                         double noise, double *random_ZeroToOne_array[NxNy] ) {
+                         double noise, double random_ZeroToOne_array[NxNy] ) {
   int ii=0;
   int i, j;
 
