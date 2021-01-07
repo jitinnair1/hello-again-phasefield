@@ -5,7 +5,7 @@ project(phasefieldC)
 set(CMAKE_C_STANDARD 99)
 
 # Define flags for specific builds
-set(CMAKE_C_FLAGS_DEBUG "-Wall -g -O0")
+set(CMAKE_C_FLAGS_DEBUG "-Wall -g -O3")
 
 #NOTE: Debug should be run using the -O0 else values of variables are removed
 
