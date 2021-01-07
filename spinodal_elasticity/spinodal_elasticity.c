@@ -112,13 +112,13 @@ int main(int argc, char const *argv[]) {
     et12=(double*)malloc(sizeof(double) * num_points);
 
     //green tensor array
-    double (*tmatx)[Nx][Ny][2][2][2][2] = malloc(sizeof(double[Nx][Ny][2][2][2][2]));
+    double (*tmatx)[Ny][2][2][2][2] = malloc(sizeof(double[Nx][Ny][2][2][2][2]));
 
     //stress tensor
-    double (*smatx)[Nx][Ny][2][2] = malloc(sizeof(double[Nx][Ny][2][2]));
+    double (*smatx)[Ny][2][2] = malloc(sizeof(double[Nx][Ny][2][2]));
 
     //strain tensor
-    double (*ematx)[Nx][Ny][2][2] = malloc(sizeof(double[Nx][Ny][2][2]));
+    double (*ematx)[Ny][2][2] = malloc(sizeof(double[Nx][Ny][2][2]));
 
     //FFTW plans
     p1=fftw_plan_dft_2d(Nx, Ny, conc, conc_tilde, FFTW_FORWARD, FFTW_ESTIMATE);
@@ -224,6 +224,16 @@ int main(int argc, char const *argv[]) {
     }
 
     //FFTW Free, Destroy and Cleanup
+
+    free(conc_print);
+    free(random_ZeroToOne_array);
+    free(ei11);
+    free(ei22);
+    free(ei33);
+    free(ei12);
+    free(c11);
+    free(c12);
+    free(c44);
     fftw_destroy_plan(p1);
     fftw_destroy_plan(p2);
     fftw_destroy_plan(p3);
@@ -235,8 +245,8 @@ int main(int argc, char const *argv[]) {
     free(et12);
     free(kx);
     free(ky);
-    free(conc_print);
-    free(random_ZeroToOne_array);
+    free(k2);
+    free(k4);
     fftw_free(conc);
     fftw_free(conc_tilde);
     fftw_free(free_energy);
