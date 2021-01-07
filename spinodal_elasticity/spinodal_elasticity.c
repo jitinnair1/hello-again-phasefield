@@ -17,7 +17,7 @@ int main(int argc, char const *argv[]) {
     fftw_plan p1,p2,p3,p4,p5;
 
     //evolution constants
-    double conc0=0.40,
+    double conc0=0.5,
             dt=0.05,
             mobility=1.0,
             kappa=0.5,
@@ -27,19 +27,19 @@ int main(int argc, char const *argv[]) {
             denom;
 
     //output save constants
-    int nstep=100,
-    iprint=20,
+    int nstep=30000,
+    iprint=500,
     istep=0;
 
     int i, j, ii;
     int num_points = Nx * Ny;
 
     //type of microstructure (iflag=1 is two grain setup for benchmarking)
-    int iflag=1;
+    int iflag=2;
 
     //elastic constants
     double cm11, cm12, cm44, cp11, cp12, cp44;
-    double mu=1.0; //C_particle to C_matrix ratio
+    double mu=2.0; //C_particle to C_matrix ratio
     cm11 = 1400.0;
     cm12 = 600.0;
     cm44 = 400.0;
