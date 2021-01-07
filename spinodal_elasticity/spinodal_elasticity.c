@@ -234,6 +234,9 @@ int main(int argc, char const *argv[]) {
     free(c11);
     free(c12);
     free(c44);
+    free(tmatx);
+    free(smatx);
+    free(ematx);
     fftw_destroy_plan(p1);
     fftw_destroy_plan(p2);
     fftw_destroy_plan(p3);
