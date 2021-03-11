@@ -1,12 +1,11 @@
 # About
-This repo has simple implementations of classical diffusion equation and spinodal decomposition in C solving which are usually the first steps of getting started with Phasefield modelling as well.
-
-For examples implemented in MATLAB, [check out this repo](https://github.com/jitinnair1/hello-phasefield)
+This repo has simple implementations of classical diffusion equation and spinodal decomposition solvers in C. For examples implemented in MATLAB, [check out this repo](https://github.com/jitinnair1/hello-phasefield)
 
 I have learned a lot looking at other people's code. I am posting my code here so that somebody starting out could use this as a template to build upon or to tinker around to understand what is happening.
 
 # Build and Use Instructions
-Use the following commands in you terminal:
+Use the following commands in your terminal:
+
 ```bash
 git clone git@github.com:jitinnair1/hello-again-phasefield.git
 cd hello-again-phasefield && mkdir build && cd build
@@ -14,7 +13,7 @@ cmake ..
 make
 ```
 
-Once the project is built, you will find the excutables under the `bin` folder of your copy of the code. To run the executable use `./` followed by the name of the executable like:
+Once the project is built, you will find the excutables under the `bin` folder. To run the executable use `./` followed by the name of the executable like:
 
 ```bash
 ./diffusion_eqn_explicit
