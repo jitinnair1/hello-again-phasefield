@@ -1,3 +1,4 @@
+# About
 This repo has simple implementations of classical diffusion equation and spinodal decomposition in C solving which are usually the first steps of getting started with Phasefield modelling as well.
 
 For examples implemented in MATLAB, [check out this repo](https://github.com/jitinnair1/hello-phasefield)
