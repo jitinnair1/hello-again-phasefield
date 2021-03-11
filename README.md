@@ -22,5 +22,5 @@ Once the project is built, you will find the excutables under the `bin` folder o
 
 This will generate an output folder with `.vtk` files which can be opened using [ParaView](https://www.paraview.org/download/)
 
-# A Word Of Caution
+# a word of caution
 This code was written at a time when I had just started learning C. So this code is not optimised for performance. Please create an issue if you encountered errors or unexpected behavior.
