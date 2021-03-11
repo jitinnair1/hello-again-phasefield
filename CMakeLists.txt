@@ -4,6 +4,9 @@ project(hello-phasefield)
 #Set C Standard
 set(CMAKE_C_STANDARD 99)
 
+#Change binary output folder
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../bin)
+
 # Define flags for specific builds
 set(CMAKE_C_FLAGS_DEBUG "-Wall -g -O3")
 

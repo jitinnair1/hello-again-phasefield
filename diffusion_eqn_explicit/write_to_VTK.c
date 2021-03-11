@@ -12,13 +12,13 @@ void write_to_VTK( int nx, int ny, int nz, double dx, double dy, double dz, int 
 
   // create output directory if not created
   struct stat st = {0};
-  if (stat("./output", &st) == -1) {
-    mkdir("./output", 0700);
+  if (stat("../output", &st) == -1) {
+    mkdir("../output", 0700);
   }
 
   FILE *fp;
   char filename[30];
-  sprintf(filename, "./output/time_%05d.vtk", iprint);
+  sprintf(filename, "../output/time_%05d.vtk", iprint);
   fp = fopen(filename,"w");
 
   // write header of VTK file
